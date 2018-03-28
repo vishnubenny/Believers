@@ -1,5 +1,6 @@
 package com.lv.note.personalnote.ui.base
 
+import com.fabsv.believers.believers.ui.base.MvpView
 import java.lang.ref.WeakReference
 
 /**

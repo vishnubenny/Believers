@@ -2,7 +2,7 @@ package com.fabsv.believers.believers.ui.module.login
 
 import com.jakewharton.rxbinding2.InitialValueObservable
 import com.lv.note.personalnote.ui.base.MvpPresenter
-import com.lv.note.personalnote.ui.base.MvpView
+import com.fabsv.believers.believers.ui.base.MvpView
 import io.reactivex.Observable
 
 interface LoginContract {

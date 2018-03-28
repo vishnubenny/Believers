@@ -2,36 +2,54 @@ package com.fabsv.believers.believers.ui.utils
 
 import android.content.Context
 import android.support.v7.app.AlertDialog
-import com.fabsv.believers.believers.ui.module.mainactivity.MainActivity
 
 class AppAlertDialog {
-    val context: Context
-    val message: String
-    val positiveButton: String
-    val mainActivity1: MainActivity
 
-    var mainActivity2: MainActivity? = null
-    var negativeButton: String = ""
-
-    var alertDialog: AlertDialog? = null
+    private val context: Context
+    private val message: String
+    private val positiveButton: String
+    private var onAlertButtonClick: OnAlertButtonClick
+    private var negativeButton: String = ""
+    private var alertDialog: AlertDialog? = null
 
 
     constructor(context: Context, message: String, positiveButton: String, negativeButton: String,
-                mainActivity1: MainActivity, mainActivity2: MainActivity) {
+                onAlertButtonClick: OnAlertButtonClick) {
         this.context = context
         this.message = message
         this.positiveButton = positiveButton
-        this.mainActivity1 = mainActivity1
         this.negativeButton = negativeButton
-        this.mainActivity2 = mainActivity2
+        this.onAlertButtonClick = onAlertButtonClick
     }
 
-    constructor(context: Context, message: String, positiveButton: String, mainActivity1: MainActivity) {
+    constructor(context: Context, message: String, positiveButton: String, onAlertButtonClick: OnAlertButtonClick) {
         this.context = context
         this.message = message
         this.positiveButton = positiveButton
-        this.mainActivity1 = mainActivity1
+        this.onAlertButtonClick = onAlertButtonClick
     }
 
+    fun getAlertDialog(setCancelable: Boolean): AlertDialog {
+        alertDialog = AlertDialog.Builder(context).create()
+        alertDialog!!.setTitle(message)
+        alertDialog!!.setButton(AlertDialog.BUTTON_POSITIVE, positiveButton,
+                { dialog, which ->
+                    dialog.dismiss()
+                    onAlertButtonClick.onPositiveButtonClick()
+                })
+        if (negativeButton.isNotEmpty()) {
+            alertDialog!!.setButton(AlertDialog.BUTTON_NEGATIVE, negativeButton,
+                    { dialog, which ->
+                        dialog.dismiss()
+                        onAlertButtonClick.onNegativeButtonClick()
+                    })
+        }
+        alertDialog!!.setCancelable(setCancelable)
+        return alertDialog!!
+    }
 
+    interface OnAlertButtonClick {
+        fun onPositiveButtonClick()
+        fun onNegativeButtonClick()
+    }
 }

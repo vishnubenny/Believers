@@ -11,7 +11,6 @@ import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.lv.note.personalnote.ui.base.BaseFragment
 import com.lv.note.personalnote.ui.base.MvpPresenter
-import com.lv.note.personalnote.ui.base.MvpView
 
 import org.jetbrains.anko.toast
 
@@ -84,6 +83,10 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
 
     override fun requestPermissionsSafely(permissionArray: Array<String>, requestId: Int) {
         (activity as MvpActivity<*, *>).requestPermissionsSafely(permissionArray, requestId)
+    }
+
+    override fun safeFinishActivity() {
+        (activity as MvpActivity<*, *>).safeFinishActivity()
     }
 
     override fun showShortToast(message: String) {

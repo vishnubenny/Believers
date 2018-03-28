@@ -1,5 +1,6 @@
 package com.fabsv.believers.believers.ui.module.mainactivity
 
+import android.Manifest
 import android.content.pm.PackageManager
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.ui.base.MvpActivity
@@ -7,7 +8,7 @@ import com.fabsv.believers.believers.ui.utils.AppAlertDialog
 import com.fabsv.believers.believers.util.constants.AppConstants
 
 class MainActivity : MvpActivity<MainContract.MainView, MainContract.MainPresenter>(),
-        MainContract.MainView {
+        MainContract.MainView, AppAlertDialog.OnAlertButtonClick {
     override fun onPrepareActivity() {
 
         presenter!!.showFragment();
@@ -23,8 +24,19 @@ class MainActivity : MvpActivity<MainContract.MainView, MainContract.MainPresent
 
     override fun showPermissionRequiredAlert() {
         val appAlertDialog = AppAlertDialog(this, getString(R.string.app_will_not_work_without_camera_permission),
-                "EXIT", "CONTINUE", this, this)
+                "CONTINUE", "EXIT", this)
+        val alert = appAlertDialog.getAlertDialog(false)
+        alert.show()
     }
+
+    override fun onPositiveButtonClick() {
+        requestPermissionsSafely(arrayOf(Manifest.permission.CAMERA), AppConstants.PermissionConstants.REQUEST_ID_CAMERA)
+    }
+
+    override fun onNegativeButtonClick() {
+        safeFinishActivity()
+    }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (AppConstants.PermissionConstants.REQUEST_ID_CAMERA == requestCode) {
