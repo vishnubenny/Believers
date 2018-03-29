@@ -31,6 +31,10 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
         return RxView.clicks(button_scan)
     }
 
+    override fun getReportButtonClickEvent(): Observable<Any> {
+        return RxView.clicks(button_report)
+    }
+
     override fun showLoggedInUserPhoneNumber(phoneNumber: String) {
         text_view_logged_in_user_phone_number.text = phoneNumber
     }

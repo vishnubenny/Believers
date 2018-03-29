@@ -9,6 +9,7 @@ interface HomeContract {
     interface HomeView : MvpView {
         fun getLogoutButtonClickEvent(): Observable<Any>
         fun getScanButtonClickEvent(): Observable<Any>
+        fun getReportButtonClickEvent(): Observable<Any>
         fun showLoggedInUserPhoneNumber(phoneNumber: String)
 
     }

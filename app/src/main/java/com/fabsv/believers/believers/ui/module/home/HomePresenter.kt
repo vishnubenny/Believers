@@ -5,6 +5,7 @@ import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.repository.UserRepository
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
+import com.fabsv.believers.believers.ui.module.report.ReportFragment
 import com.fabsv.believers.believers.ui.module.scan.ScanFragment
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
@@ -42,6 +43,15 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 }
         val scanButtonDisposable = scanButtonObservable.subscribe()
         compositeDisposable.add(scanButtonDisposable)
+
+        val reportButtonObservable: Observable<Boolean> = getView()!!
+                .getReportButtonClickEvent()
+                .map { event: Any -> true }
+                .doOnNext { clicked: Boolean ->
+                    showReportScreen()
+                }
+        val reportButtonDisposable = reportButtonObservable.subscribe()
+        this.compositeDisposable.add(reportButtonDisposable)
     }
 
     override fun showLoggedInUserDetail() {
@@ -69,6 +79,12 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     private fun showScanScreen() {
         if (isViewAttached()) {
             getView()!!.showFragment(ScanFragment.getInstance(), true)
+        }
+    }
+
+    private fun showReportScreen() {
+        if (isViewAttached()) {
+            getView()!!.showFragment(ReportFragment.getInstance(), true)
         }
     }
 
