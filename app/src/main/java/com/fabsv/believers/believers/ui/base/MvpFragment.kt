@@ -1,7 +1,9 @@
 package com.fabsv.believers.believers.ui.base
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -77,6 +79,7 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
         return (activity as MvpActivity<*, *>).popBackCurrentFragment()
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     override fun hasPermission(permission: String): Boolean {
         return (activity as MvpActivity<*, *>).hasPermission(permission)
     }
