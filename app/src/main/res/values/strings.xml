@@ -11,4 +11,6 @@
     <string name="approve">Approve</string>
     <string name="scan_again">Scan Again</string>
     <string name="app_will_not_work_without_camera_permission">App will not work without camera permission</string>
+    <string name="login">Login</string>
+    <string name="verify_otp">Verify OTP</string>
 </resources>
