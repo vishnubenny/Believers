@@ -8,6 +8,7 @@
 /.idea/misc.xml
 /.idea/
 /.idea
+.idea/
 .DS_Store
 /build
 /captures
@@ -56,6 +57,8 @@ captures/
 .idea/dictionaries
 .idea/libraries
 .idea/caches
+.idea/
+.idea
 
 # Keystore files
 *.jks
