@@ -1,8 +1,11 @@
 package com.fabsv.believers.believers.ui.module.login
 
+import android.app.Activity
 import android.content.Context
+import com.androidhuman.rxfirebase2.auth.RxPhoneAuthProvider
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
+import com.google.firebase.auth.PhoneAuthProvider
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -10,6 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import java.util.concurrent.TimeUnit
 
 class LoginPresenter(private val context: Context, private val appPreferencesHelper: AppPreferencesHelper) :
         MvpBasePresenter<LoginContract.LoginView>(), LoginContract.LoginPresenter, AnkoLogger {
@@ -46,6 +50,21 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                 }
         val loginOperationDisposable = loginOperationObservable.subscribe()
         compositeDisposable.add(loginOperationDisposable)
+
+
+//        val phoneAuthProvider: Disposable? = PhoneAuthProvider.getInstance()
+//                .rxVerifyPhoneNumber("+919744234506", 60,
+//                        TimeUnit.SECONDS, context as Activity)
+//                .doOnNext { event: PhoneAuthEvent? ->
+//
+//                }
+//                .subscribe()
+
+        val phoneAuthProvider = PhoneAuthProvider.getInstance()
+
+        RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+919744234506", 60,
+                TimeUnit.SECONDS, context as Activity)
+                .subscribe()
     }
 
     override fun showHomeFragment() {

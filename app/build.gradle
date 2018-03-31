@@ -46,6 +46,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     //firebase - otp auth
     implementation 'com.google.firebase:firebase-auth:12.0.1'
+    //Rx firebase auth
+    implementation 'com.androidhuman.rxfirebase2:firebase-auth-kotlin:11.8.0.1'
 }
 
 
