@@ -13,4 +13,7 @@
     <string name="app_will_not_work_without_camera_permission">App will not work without camera permission</string>
     <string name="login">Login</string>
     <string name="verify_otp">Verify OTP</string>
+    <string name="enter_otp_here">Enter OTP here</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="change_number">Change Number</string>
 </resources>
