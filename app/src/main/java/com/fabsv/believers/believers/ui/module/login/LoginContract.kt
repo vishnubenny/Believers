@@ -8,14 +8,12 @@ import io.reactivex.Observable
 interface LoginContract {
     interface LoginView : MvpView {
         fun getPhoneNumberField(): InitialValueObservable<CharSequence>
-        fun getOtpField(): InitialValueObservable<CharSequence>
         fun updateLoginButtonStatus(enable: Boolean)
         fun updateVerifyOtpButtonStatus(isValidOtp: Boolean)
         fun updateVerifyAuthCodeLayoutStatus(showVerifyLayout: Boolean)
         fun getLoginButtonClick(): Observable<Any>
         fun getVerifyOtpButtonClick(): Observable<Any>
         fun getPhoneNumberFieldValue(): String
-        fun getOtpFieldValue(): String
         fun onLoginSuccess()
         fun onLoginFailure()
         fun resetScreen()
@@ -26,6 +24,7 @@ interface LoginContract {
         fun validate()
         fun showHomeFragment()
         fun updateVerifyAuthCodeLayoutStatus(showVerifyLayout: Boolean)
+        fun onPhoneAuthVerificationCompleteEvent(): Boolean
         fun unSubscribeValidations()
 
     }

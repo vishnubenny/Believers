@@ -9,5 +9,4 @@ interface UserDataSource {
     fun loginWithPhoneNumber(phoneNumber: String): Observable<Boolean>
     fun onLogoutClicked(): Observable<Boolean>
     fun getFirebasePhoneAuthObservable(): Observable<PhoneAuthEvent>?
-    fun firebaseVerifyOtp(verificationId: String, otpEntered: String): Single<FirebaseUser>?
 }

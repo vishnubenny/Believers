@@ -24,8 +24,4 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
     override fun getFirebasePhoneAuthObservable(): Observable<PhoneAuthEvent>? {
         return null
     }
-
-    override fun firebaseVerifyOtp(verificationId: String, otpEntered: String): Single<FirebaseUser>? {
-        return null
-    }
 }

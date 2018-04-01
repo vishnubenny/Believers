@@ -37,9 +37,4 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
         return RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+919744234506", 120,
                 TimeUnit.SECONDS, context as Activity)
     }
-
-    override fun firebaseVerifyOtp(verificationId: String, otpEntered: String): Single<FirebaseUser>? {
-        val credential = PhoneAuthProvider.getCredential(verificationId, otpEntered)
-        return FirebaseAuth.getInstance().rxSignInWithCredential(credential)
-    }
 }

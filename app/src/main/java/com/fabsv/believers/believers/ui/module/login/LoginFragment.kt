@@ -31,10 +31,6 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         return RxTextView.textChanges(edit_text_phone_number)
     }
 
-    override fun getOtpField(): InitialValueObservable<CharSequence> {
-        return RxTextView.textChanges(edit_text_otp)
-    }
-
     override fun updateLoginButtonStatus(enable: Boolean) {
         button_login.isEnabled = enable
         if (enable) {
@@ -43,7 +39,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     }
 
     override fun updateVerifyOtpButtonStatus(isValidOtp: Boolean) {
-        button_verify_otp.isEnabled = isValidOtp
+        button_retry.isEnabled = isValidOtp
         if (isValidOtp) {
             utilityMethods.hideKeyboard(activity!!)
         }
@@ -54,13 +50,19 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
      */
     override fun updateVerifyAuthCodeLayoutStatus(showVerifyLayout: Boolean) {
         if (showVerifyLayout) {
+            //hide layout login and layout retry attempt
             layout_login.visibility = View.GONE
+            layout_retry_attempt.visibility = View.GONE
+            //make visible layout verify
             layout_verify.visibility = View.VISIBLE
-            otpTextViewSetDefault()
         } else {
+            //hide layout
             layout_verify.visibility = View.GONE
+            layout_retry_attempt.visibility = View.GONE
+            //make visible layout login
             layout_login.visibility = View.VISIBLE
-            phoneNumberTextViewSetDefault()
+            //phone number edit text set default
+            phoneNumberEditTextSetDefault()
         }
     }
 
@@ -69,15 +71,11 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     }
 
     override fun getVerifyOtpButtonClick(): Observable<Any> {
-        return RxView.clicks(button_verify_otp)
+        return RxView.clicks(button_retry)
     }
 
     override fun getPhoneNumberFieldValue(): String {
         return edit_text_phone_number.text.toString()
-    }
-
-    override fun getOtpFieldValue(): String {
-        return edit_text_otp.text.toString()
     }
 
     override fun onLoginSuccess() {
@@ -108,14 +106,9 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         }
     }
 
-    private fun phoneNumberTextViewSetDefault() {
+    private fun phoneNumberEditTextSetDefault() {
         edit_text_phone_number.setText("")
         edit_text_phone_number.requestFocus()
-    }
-
-    private fun otpTextViewSetDefault() {
-        edit_text_otp.setText("")
-        edit_text_otp.requestFocus()
     }
 
     companion object {
