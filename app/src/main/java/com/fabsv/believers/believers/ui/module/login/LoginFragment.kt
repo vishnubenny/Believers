@@ -66,16 +66,38 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         }
     }
 
+    override fun updateOtpAttemptFailRetryLayoutStatus(isShowOtpRetryLayout: Boolean) {
+        if (isShowOtpRetryLayout) {
+            //hide login and verify otp layout
+            layout_login.visibility = View.GONE
+            layout_verify.visibility = View.GONE
+            //show otp auth attempt fail: retry layout
+            layout_retry_attempt.visibility = View.VISIBLE
+        }
+    }
+
     override fun getLoginButtonClick(): Observable<Any> {
         return RxView.clicks(button_login)
     }
 
     override fun getVerifyOtpButtonClick(): Observable<Any> {
+        return RxView.clicks(button_verify_otp)
+    }
+
+    override fun getRetryButtonClick(): Observable<Any> {
         return RxView.clicks(button_retry)
+    }
+
+    override fun getChangeNumberButtonClick(): Observable<Any> {
+        return RxView.clicks(button_change_number)
     }
 
     override fun getPhoneNumberFieldValue(): String {
         return edit_text_phone_number.text.toString()
+    }
+
+    override fun getVerifyOtpFieldValue(): String {
+        return edit_text_otp.text.toString()
     }
 
     override fun onLoginSuccess() {

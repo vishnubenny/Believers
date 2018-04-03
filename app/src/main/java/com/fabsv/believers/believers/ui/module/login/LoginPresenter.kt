@@ -7,8 +7,10 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthVerificationCompleteEvent
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
+import com.fabsv.believers.believers.util.methods.RxUtils
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.*
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -36,6 +38,18 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         val loginOperationObservable: Observable<Boolean>? = getLoginOperationObservable()
         val loginOperationDisposable = loginOperationObservable!!.subscribe()
         this.compositeDisposable.add(loginOperationDisposable)
+
+        val retryButtonClickObservable: Observable<Boolean>? = getRetryButtonClickObservable()
+        val retryButtonClickDisposable = retryButtonClickObservable!!.subscribe()
+        this.compositeDisposable.add(retryButtonClickDisposable)
+
+        val changeNumberClickObservable: Observable<Boolean>? = getChangeNumberClickObservable()
+        val changeNumberClickDisposable = changeNumberClickObservable!!.subscribe()
+        this.compositeDisposable.add(changeNumberClickDisposable)
+
+        val verifyOtpClickObservable: Observable<Boolean>? = getVerifyOtpClickObservable()
+        val verifyOtpClickDisposable = verifyOtpClickObservable!!.subscribe()
+        this.compositeDisposable.add(verifyOtpClickDisposable)
     }
 
     override fun showHomeFragment() {
@@ -50,9 +64,21 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
+    override fun updateOtpAttemptFailRetryLayoutStatus(isShowOtpRetryLayout: Boolean) {
+        if (isViewAttached()) {
+            getView()!!.updateOtpAttemptFailRetryLayoutStatus(isShowOtpRetryLayout)
+        }
+    }
+
     override fun onPhoneAuthVerificationCompleteEvent(): Boolean {
         updateLoginOperation(true)
         return true
+    }
+
+    override fun resetScreen() {
+        if (isViewAttached()) {
+            getView()!!.resetScreen()
+        }
     }
 
     override fun unSubscribeValidations() {
@@ -73,29 +99,109 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                     if (isSuccessful) {
                         updateUserPrefs(isSuccessful, getView()!!.getPhoneNumberFieldValue())
                     }
-                    //                    updateLoginOperation(isSuccessful)
                 }
                 .filter { isSuccessful: Boolean ->
                     isSuccessful
                 }
                 .switchMap { loginSuccess: Boolean ->
-                    loginInteractor.getFirebasePhoneAuthObservable()
+                    getFirebaseAuthAndEventsHandling()
                 }
+    }
+
+    private fun getRetryButtonClickObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getRetryButtonClick()
+                .map { event: Any -> true }
+                .switchMap { retryClicked: Boolean ->
+                    getFirebaseAuthAndEventsHandling()
+                }
+    }
+
+    private fun getFirebaseAuthAndEventsHandling(): Observable<Boolean> {
+        return loginInteractor.getFirebasePhoneAuthObservable(getView()!!.getPhoneNumberFieldValue())!!
                 .map { event: PhoneAuthEvent ->
                     error(event.toString())
                     if (event is PhoneAuthVerificationCompleteEvent) {
                         onPhoneAuthVerificationCompleteEvent()
                     } else if (event is PhoneAuthCodeSentEvent) {
-                        updateLocalHolders(event)
+                        onPhoneAuthCodeSentEvent(event)
                     } else if (event is PhoneAuthCodeAutoRetrievalTimeOutEvent) {
+                        onPhoneAuthCodeAutoRetrievalTimeOutEvent()
+                    } else if (event is FirebaseAuthInvalidCredentialsException) {
                         return@map false
                     } else {
                         return@map false
                     }
                 }
-                .filter { isLoginSuccess: Boolean -> !isLoginSuccess }
-                .doOnNext { showVerify: Boolean ->
-                    updateVerifyAuthCodeLayoutStatus(true)
+                .doOnError { error: Throwable? ->
+                    error(error)
+                }
+                .share()
+    }
+
+    private fun getChangeNumberClickObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getChangeNumberButtonClick()
+                .map { event: Any -> true }
+                .doOnNext { changeNumberClicked: Boolean ->
+                    resetScreen()
+                }
+    }
+
+    private fun getVerifyOtpClickObservable(): Observable<Boolean>? {
+        /*return getView()!!
+                .getVerifyOtpButtonClick()
+                .map { event: Any -> true }
+                .map { verifyOtpClicked: Boolean -> getView()!!.getVerifyOtpFieldValue() }
+                .map { otpEntered: String? ->*/
+//                    var credential: PhoneAuthCredential
+//                    try {
+//                        credential = PhoneAuthProvider.getCredential(mVerificationId!!, otpEntered!!)
+//                        RxFirebaseAuth.signInWithCredential(FirebaseAuth.getInstance(), credential)
+//                    } catch (e: FirebaseException) {
+//                        error(e)
+//                    }
+//                    Observable.error(Throwable("test"))
+        /*val credential = PhoneAuthProvider.getCredential(mVerificationId!!, otpEntered!!)
+        RxFirebaseAuth.signInWithCredential(FirebaseAuth.getInstance(), credential)
+    }
+    .doOnError { error: Throwable? ->
+        error(error)
+    }
+    .map { t: Single<FirebaseUser> -> t.blockingGet() }
+    .map { t: FirebaseUser -> false }*/
+//                .map { credential: PhoneAuthCredential ->
+//                    RxFirebaseAuth.signInWithCredential(FirebaseAuth.getInstance(), credential)
+//                            .toObservable()
+//                }
+//                .switchMap { user: Observable<FirebaseUser> -> user.isEmpty.toObservable() }
+//                .doOnNext { status: Boolean? ->
+//                    error("status " + status)
+//                }
+//                .doOnError { error: Throwable ->
+//                    error(error)
+//                }
+
+        return getView()!!
+                .getVerifyOtpButtonClick()
+                .map { event: Any -> true }
+                .map { verifyOtpClicked: Boolean -> getView()!!.getVerifyOtpFieldValue() }
+                .switchMap { otpEntered: String ->
+                    RxUtils.makeObservable(
+                            PhoneAuthProvider.getCredential(mVerificationId!!, otpEntered)
+                    )
+                }
+                .switchMap { credential: PhoneAuthCredential ->
+                    RxUtils.makeObservable(FirebaseAuth.getInstance().signInWithCredential(credential))
+                }
+                .map { result: Task<AuthResult> ->
+                    if (null != result.exception) {
+                        return@map false
+                    } else if (result.isSuccessful) {
+                        return@map true
+                    } else {
+                        return@map false
+                    }
                 }
     }
 
@@ -133,15 +239,16 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
-    private fun updateLocalHolders(phoneAuthCodeSentEvent: PhoneAuthCodeSentEvent): Boolean {
+    private fun onPhoneAuthCodeSentEvent(phoneAuthCodeSentEvent: PhoneAuthCodeSentEvent): Boolean {
         mVerificationId = phoneAuthCodeSentEvent.verificationId()
         mResendToken = phoneAuthCodeSentEvent.forceResendingToken()
+        updateVerifyAuthCodeLayoutStatus(true)
         return false
     }
 
-    private fun updateLocalHolders(phoneAuthVerificationCompleteEvent: PhoneAuthVerificationCompleteEvent): Boolean {
-        error(phoneAuthVerificationCompleteEvent.credential().toString())
-        return true
+    private fun onPhoneAuthCodeAutoRetrievalTimeOutEvent(): Boolean {
+        updateOtpAttemptFailRetryLayoutStatus(true)
+        return false
     }
 
     private fun updateLocalHolders(exception: FirebaseException): Boolean {

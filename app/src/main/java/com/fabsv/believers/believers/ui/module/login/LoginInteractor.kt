@@ -14,8 +14,8 @@ class LoginInteractor(private val context: Context, val appPreferencesHelper: Ap
         return userRepository.loginWithPhoneNumber(phoneNumber)
     }
 
-    fun getFirebasePhoneAuthObservable(): Observable<PhoneAuthEvent>? {
-        return userRepository.getFirebasePhoneAuthObservable()
+    fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
+        return userRepository.getFirebasePhoneAuthObservable(phoneNumberFieldValue)
     }
 
     init {

@@ -10,6 +10,8 @@ class AppConstants {
     class LoginConstants {
         companion object {
             val DUMMY_PHONE_NUMBER = "9744234506"
+            val DUMMY_PHONE_NUMBER_1 = "9497867506"
+            val DUMMY_PHONE_NUMBER_2 = "7012314408"
         }
 
     }

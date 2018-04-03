@@ -25,7 +25,7 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
         return userLocalDataSource.onLogoutClicked()
     }
 
-    fun getFirebasePhoneAuthObservable(): Observable<PhoneAuthEvent>? {
-        return userRemoteDataSource.getFirebasePhoneAuthObservable()
+    fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
+        return userRemoteDataSource.getFirebasePhoneAuthObservable(phoneNumberFieldValue)
     }
 }

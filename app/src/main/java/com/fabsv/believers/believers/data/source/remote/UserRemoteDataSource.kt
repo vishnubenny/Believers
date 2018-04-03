@@ -4,18 +4,14 @@ import android.app.Activity
 import android.content.Context
 import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.RxPhoneAuthProvider
-import com.androidhuman.rxfirebase2.auth.rxSignInWithCredential
 import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.User
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiClient
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiInterface
 import com.fabsv.believers.believers.util.methods.RxUtils
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.PhoneAuthProvider
 import io.reactivex.Observable
-import io.reactivex.Single
 import org.jetbrains.anko.AnkoLogger
 import java.util.concurrent.TimeUnit
 
@@ -32,9 +28,9 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
         return RxUtils.makeObservable(false)
     }
 
-    override fun getFirebasePhoneAuthObservable(): Observable<PhoneAuthEvent>? {
+    override fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
         val phoneAuthProvider = PhoneAuthProvider.getInstance()
-        return RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+919744234506", 120,
+        return RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+91$phoneNumberFieldValue", 5,
                 TimeUnit.SECONDS, context as Activity)
     }
 }
