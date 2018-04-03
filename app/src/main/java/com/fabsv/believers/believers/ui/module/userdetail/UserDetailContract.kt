@@ -7,6 +7,7 @@ import io.reactivex.Observable
 interface UserDetailContract {
     interface UserDetailView : MvpView {
         fun getRejectButtonClickEvent(): Observable<Any>
+        fun getApproveButtonClickEvent(): Observable<Any>
         fun exitUserDetailScreen()
 
     }
