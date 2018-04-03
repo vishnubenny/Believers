@@ -30,7 +30,7 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
 
     override fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
         val phoneAuthProvider = PhoneAuthProvider.getInstance()
-        return RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+91$phoneNumberFieldValue", 5,
+        return RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+91$phoneNumberFieldValue", 120,
                 TimeUnit.SECONDS, context as Activity)
     }
 }

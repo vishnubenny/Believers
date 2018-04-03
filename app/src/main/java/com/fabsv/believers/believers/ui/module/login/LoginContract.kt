@@ -9,6 +9,7 @@ import io.reactivex.ObservableSource
 interface LoginContract {
     interface LoginView : MvpView {
         fun getPhoneNumberField(): InitialValueObservable<CharSequence>
+        fun getOtpNumberObservable(): InitialValueObservable<CharSequence>
         fun updateLoginButtonStatus(enable: Boolean)
         fun updateVerifyOtpButtonStatus(isValidOtp: Boolean)
         fun updateVerifyAuthCodeLayoutStatus(showVerifyLayout: Boolean)

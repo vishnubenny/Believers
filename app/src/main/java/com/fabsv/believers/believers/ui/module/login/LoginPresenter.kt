@@ -9,7 +9,6 @@ import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelpe
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
 import com.fabsv.believers.believers.util.methods.RxUtils
 import com.google.android.gms.tasks.Task
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
@@ -46,6 +45,11 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         val changeNumberClickObservable: Observable<Boolean>? = getChangeNumberClickObservable()
         val changeNumberClickDisposable = changeNumberClickObservable!!.subscribe()
         this.compositeDisposable.add(changeNumberClickDisposable)
+
+        val otpNumberObservable: Observable<Boolean>? = getOtpNumberObservable()
+        val otpNumberDisposable = otpNumberObservable!!.subscribe()
+        this.compositeDisposable.add(otpNumberDisposable)
+
 
         val verifyOtpClickObservable: Observable<Boolean>? = getVerifyOtpClickObservable()
         val verifyOtpClickDisposable = verifyOtpClickObservable!!.subscribe()
@@ -98,6 +102,8 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                 .doOnNext { isSuccessful: Boolean ->
                     if (isSuccessful) {
                         updateUserPrefs(isSuccessful, getView()!!.getPhoneNumberFieldValue())
+                    } else {
+                        updateLoginOperation(false)
                     }
                 }
                 .filter { isSuccessful: Boolean ->
@@ -148,40 +154,16 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                 }
     }
 
-    private fun getVerifyOtpClickObservable(): Observable<Boolean>? {
-        /*return getView()!!
-                .getVerifyOtpButtonClick()
-                .map { event: Any -> true }
-                .map { verifyOtpClicked: Boolean -> getView()!!.getVerifyOtpFieldValue() }
-                .map { otpEntered: String? ->*/
-//                    var credential: PhoneAuthCredential
-//                    try {
-//                        credential = PhoneAuthProvider.getCredential(mVerificationId!!, otpEntered!!)
-//                        RxFirebaseAuth.signInWithCredential(FirebaseAuth.getInstance(), credential)
-//                    } catch (e: FirebaseException) {
-//                        error(e)
-//                    }
-//                    Observable.error(Throwable("test"))
-        /*val credential = PhoneAuthProvider.getCredential(mVerificationId!!, otpEntered!!)
-        RxFirebaseAuth.signInWithCredential(FirebaseAuth.getInstance(), credential)
+    private fun getOtpNumberObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getOtpNumberObservable()
+                .map { otpEntered: CharSequence -> otpEntered.length == 6 }
+                .doOnNext { isValidOtpFormat: Boolean ->
+                    updateVerifyOtpButtonStatus(isValidOtpFormat)
+                }
     }
-    .doOnError { error: Throwable? ->
-        error(error)
-    }
-    .map { t: Single<FirebaseUser> -> t.blockingGet() }
-    .map { t: FirebaseUser -> false }*/
-//                .map { credential: PhoneAuthCredential ->
-//                    RxFirebaseAuth.signInWithCredential(FirebaseAuth.getInstance(), credential)
-//                            .toObservable()
-//                }
-//                .switchMap { user: Observable<FirebaseUser> -> user.isEmpty.toObservable() }
-//                .doOnNext { status: Boolean? ->
-//                    error("status " + status)
-//                }
-//                .doOnError { error: Throwable ->
-//                    error(error)
-//                }
 
+    private fun getVerifyOtpClickObservable(): Observable<Boolean>? {
         return getView()!!
                 .getVerifyOtpButtonClick()
                 .map { event: Any -> true }
@@ -192,17 +174,11 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                     )
                 }
                 .switchMap { credential: PhoneAuthCredential ->
-                    RxUtils.makeObservable(FirebaseAuth.getInstance().signInWithCredential(credential))
+                    RxUtils.makeObservable(FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { task: Task<AuthResult> ->
+                        updateLoginOperation(task.isSuccessful)
+                    })
                 }
-                .map { result: Task<AuthResult> ->
-                    if (null != result.exception) {
-                        return@map false
-                    } else if (result.isSuccessful) {
-                        return@map true
-                    } else {
-                        return@map false
-                    }
-                }
+                .map { t: Task<AuthResult> -> true }
     }
 
     private fun getPhoneNumberObservable(): Observable<Boolean>? {
@@ -239,6 +215,12 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
+    private fun updateVerifyOtpButtonStatus(isValidOtpFormat: Boolean) {
+        if (isViewAttached()) {
+            getView()!!.updateVerifyOtpButtonStatus(isValidOtpFormat)
+        }
+    }
+
     private fun onPhoneAuthCodeSentEvent(phoneAuthCodeSentEvent: PhoneAuthCodeSentEvent): Boolean {
         mVerificationId = phoneAuthCodeSentEvent.verificationId()
         mResendToken = phoneAuthCodeSentEvent.forceResendingToken()
@@ -248,11 +230,6 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
 
     private fun onPhoneAuthCodeAutoRetrievalTimeOutEvent(): Boolean {
         updateOtpAttemptFailRetryLayoutStatus(true)
-        return false
-    }
-
-    private fun updateLocalHolders(exception: FirebaseException): Boolean {
-        error(exception.toString())
         return false
     }
 
@@ -269,13 +246,13 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
-    init {
-        this.compositeDisposable = CompositeDisposable()
-        this.loginInteractor = LoginInteractor(context, appPreferencesHelper)
-    }
-
     override fun detachView(retainInstance: Boolean) {
         disposeCompositeDisposable()
         super.detachView(retainInstance)
+    }
+
+    init {
+        this.compositeDisposable = CompositeDisposable()
+        this.loginInteractor = LoginInteractor(context, appPreferencesHelper)
     }
 }

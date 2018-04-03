@@ -31,6 +31,10 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         return RxTextView.textChanges(edit_text_phone_number)
     }
 
+    override fun getOtpNumberObservable(): InitialValueObservable<CharSequence> {
+        return RxTextView.textChanges(edit_text_otp)
+    }
+
     override fun updateLoginButtonStatus(enable: Boolean) {
         button_login.isEnabled = enable
         if (enable) {
@@ -39,7 +43,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     }
 
     override fun updateVerifyOtpButtonStatus(isValidOtp: Boolean) {
-        button_retry.isEnabled = isValidOtp
+        button_verify_otp.isEnabled = isValidOtp
         if (isValidOtp) {
             utilityMethods.hideKeyboard(activity!!)
         }
