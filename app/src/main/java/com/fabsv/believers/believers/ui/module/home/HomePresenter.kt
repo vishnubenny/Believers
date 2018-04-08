@@ -71,7 +71,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
             if (logoutStatus) {
                 getView()!!.showFragment(LoginFragment.getInstance(), false)
             } else {
-                getView()!!.showShortToast(context.getString(R.string.something_went_wrong_please_try_again))
+                getView()!!.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
             }
         }
     }

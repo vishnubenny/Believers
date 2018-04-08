@@ -121,7 +121,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     }
 
     override fun onLoginFailure() {
-        showShortToast(getString(R.string.login_failed_contact_your_admin))
+        showShortToast(getString(R.string.something_went_wrong_please_contact_admin))
     }
 
     private fun presetLoggedInUserPhoneNumber() {

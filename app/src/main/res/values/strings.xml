@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Believers</string>
-    <string name="login_failed_contact_your_admin">Login Failed. Contact your admin!</string>
-    <string name="something_went_wrong_please_try_again">Something went wrong. Please try again!</string>
+    <string name="something_went_wrong_please_contact_admin">Something went wrong. Please contact admin!</string>
     <string name="logout">Logout</string>
     <string name="report">Report</string>
     <string name="scan">Scan</string>
