@@ -13,7 +13,7 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
 
     init {
         this.compositeDisposable = CompositeDisposable()
-        this.userDetailInteractor = UserDetailInteractor(context)
+        this.userDetailInteractor = UserDetailInteractor(context, appPreferencesHelper)
     }
 
     override fun validate() {
@@ -30,8 +30,15 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         return getView()!!
                 .getApproveButtonClickEvent()
                 .map { event: Any -> true }
-                .doOnNext {
-
+                .switchMap {
+                    userDetailInteractor.updateApproveStatusOfUser("", "","")
+                }
+                .doOnNext { status: Boolean ->
+                    if (status) {
+                        approveStatusUpdateSuccess()
+                    } else {
+                        apporveStatusUpdateFailed()
+                    }
                 }
     }
 
@@ -46,6 +53,14 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         if (isViewAttached()) {
             getView()!!.exitUserDetailScreen()
         }
+    }
+
+    private fun approveStatusUpdateSuccess() {
+
+    }
+
+    private fun apporveStatusUpdateFailed() {
+
     }
 
     private fun clearCompositeDisposable() {
