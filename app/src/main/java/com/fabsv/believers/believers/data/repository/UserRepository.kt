@@ -28,4 +28,8 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
     fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
         return userRemoteDataSource.getFirebasePhoneAuthObservable(phoneNumberFieldValue)
     }
+
+    fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
+        return userLocalDataSource.updateApproveStatusOfUser(phoneNumber, qrCode, updatedStatus)
+    }
 }

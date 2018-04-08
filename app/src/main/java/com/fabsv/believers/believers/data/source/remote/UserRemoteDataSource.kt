@@ -17,10 +17,10 @@ import java.util.concurrent.TimeUnit
 
 class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPreferencesHelper) :
         UserDataSource, AnkoLogger {
+    private var apiInterface: ApiInterface
 
     override fun loginWithPhoneNumber(phoneNumber: String): Observable<Boolean> {
-        val apiInterface: ApiInterface = ApiClient.getClient()!!.create(ApiInterface::class.java)
-        return apiInterface.userLogin(phoneNumber)
+        return this.apiInterface.userLogin(phoneNumber)
                 .map { user: User -> "y".contentEquals(user.getStatus()!!) }
     }
 
@@ -32,5 +32,14 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
         val phoneAuthProvider = PhoneAuthProvider.getInstance()
         return RxPhoneAuthProvider.verifyPhoneNumber(phoneAuthProvider, "+91$phoneNumberFieldValue", 120,
                 TimeUnit.SECONDS, context as Activity)
+    }
+
+    override fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
+        return this.apiInterface.updateApproveStatusOfUser(phoneNumber, qrCode, updatedStatus)
+                .map { user: User -> "y".contentEquals(user.getStatus()!!) }
+    }
+
+    init {
+        this.apiInterface = ApiClient.getClient()!!.create(ApiInterface::class.java)
     }
 }

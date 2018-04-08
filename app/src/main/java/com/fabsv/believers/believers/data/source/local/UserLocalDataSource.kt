@@ -24,4 +24,8 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
     override fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
         return null
     }
+
+    override fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
+        return RxUtils.makeObservable(true)
+    }
 }

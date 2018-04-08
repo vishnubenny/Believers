@@ -14,7 +14,7 @@ interface ApiInterface {
     fun getUserData(@Query("qrvalue") qrValue: String): Observable<UserDetail>
 
     @GET("attendance")
-    fun userAttendance(@Query("phone") phoneNumber: String,
-                       @Query("qrvalue") qrValue: String,
-                       @Query("status") updateStatus: String): Observable<User>
+    fun updateApproveStatusOfUser(@Query("phone") phoneNumber: String,
+                                  @Query("qrvalue") qrValue: String,
+                                  @Query("status") updateStatus: String): Observable<User>
 }
