@@ -8,7 +8,12 @@ interface UserDetailContract {
     interface UserDetailView : MvpView {
         fun getRejectButtonClickEvent(): Observable<Any>
         fun getApproveButtonClickEvent(): Observable<Any>
+
+        fun getScannedQrCode(): String
+
         fun exitUserDetailScreen()
+        fun onApproveStatusUpdateFailed()
+        fun onApproveStatusUpdateSuccess()
 
     }
 

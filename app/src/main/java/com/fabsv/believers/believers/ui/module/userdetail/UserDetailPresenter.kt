@@ -30,8 +30,10 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         return getView()!!
                 .getApproveButtonClickEvent()
                 .map { event: Any -> true }
-                .switchMap {
-                    userDetailInteractor.updateApproveStatusOfUser("", "","")
+                .map { clicked: Boolean -> getView()!!.getScannedQrCode() }
+                .switchMap { scannedQrCode: String ->
+                    userDetailInteractor.updateApproveStatusOfUser(appPreferencesHelper.getLoggedInUserPhoneNumber(),
+                            scannedQrCode, "y")
                 }
                 .doOnNext { status: Boolean ->
                     if (status) {
@@ -56,11 +58,15 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
     }
 
     private fun approveStatusUpdateSuccess() {
-
+        if (isViewAttached()) {
+            getView()!!.onApproveStatusUpdateSuccess()
+        }
     }
 
     private fun apporveStatusUpdateFailed() {
-
+        if (isViewAttached()) {
+            getView()!!.onApproveStatusUpdateFailed()
+        }
     }
 
     private fun clearCompositeDisposable() {

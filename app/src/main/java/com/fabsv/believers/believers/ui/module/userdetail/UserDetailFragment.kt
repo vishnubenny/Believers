@@ -37,8 +37,20 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
         return RxView.clicks(button_approve)
     }
 
+    override fun getScannedQrCode(): String {
+        return ""
+    }
+
     override fun exitUserDetailScreen() {
         popBackCurrentFragment()
+    }
+
+    override fun onApproveStatusUpdateSuccess() {
+        exitUserDetailScreen()
+    }
+
+    override fun onApproveStatusUpdateFailed() {
+        showShortToast(getString(R.string.something_went_wrong_please_contact_admin))
     }
 
     private fun testBase64Image() {

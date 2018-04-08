@@ -26,6 +26,12 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
     }
 
     override fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
-        return RxUtils.makeObservable(true)
+        val status: Boolean
+        if ("000000".contentEquals(qrCode)) {
+            status = false
+        } else {
+            status = true
+        }
+        return RxUtils.makeObservable(status)
     }
 }
