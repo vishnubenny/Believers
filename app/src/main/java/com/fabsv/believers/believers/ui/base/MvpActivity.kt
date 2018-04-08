@@ -1,6 +1,5 @@
 package com.fabsv.believers.believers.ui.base
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.pm.PackageManager
 import android.os.Build
@@ -11,7 +10,6 @@ import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.lv.note.personalnote.ui.base.BaseActivity
 import com.lv.note.personalnote.ui.base.MvpPresenter
-import com.lv.note.personalnote.ui.base.MvpView
 import org.jetbrains.anko.toast
 
 /**
@@ -85,6 +83,13 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
     @TargetApi(Build.VERSION_CODES.M)
     override fun requestPermissionsSafely(permissionArray: Array<String>, requestId: Int) {
         requestPermissions(permissionArray, requestId)
+    }
+
+    override fun safeFinishActivity() {
+        while (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStackImmediate()
+        }
+        finish()
     }
 
     fun getCurrentFragmentInstance(): Fragment {

@@ -1,6 +1,7 @@
 package com.fabsv.believers.believers.data.repository
 
 import android.content.Context
+import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.fabsv.believers.believers.data.source.local.UserLocalDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.UserRemoteDataSource
@@ -17,10 +18,18 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
     }
 
     fun loginWithPhoneNumber(phoneNumber: String): Observable<Boolean> {
-        return userRemoteDataSource.loginWithPhoneNumber(phoneNumber)
+        return userLocalDataSource.loginWithPhoneNumber(phoneNumber)
     }
 
     fun onLogoutClicked(): Observable<Boolean> {
         return userLocalDataSource.onLogoutClicked()
+    }
+
+    fun getFirebasePhoneAuthObservable(phoneNumberFieldValue: String): Observable<PhoneAuthEvent>? {
+        return userRemoteDataSource.getFirebasePhoneAuthObservable(phoneNumberFieldValue)
+    }
+
+    fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
+        return userLocalDataSource.updateApproveStatusOfUser(phoneNumber, qrCode, updatedStatus)
     }
 }

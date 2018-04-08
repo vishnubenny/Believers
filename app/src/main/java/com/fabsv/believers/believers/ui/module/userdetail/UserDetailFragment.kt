@@ -33,6 +33,10 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
         return RxView.clicks(button_reject)
     }
 
+    override fun getApproveButtonClickEvent(): Observable<Any> {
+        return RxView.clicks(button_approve)
+    }
+
     override fun exitUserDetailScreen() {
         popBackCurrentFragment()
     }

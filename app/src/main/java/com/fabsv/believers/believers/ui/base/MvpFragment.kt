@@ -1,7 +1,9 @@
 package com.fabsv.believers.believers.ui.base
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -11,7 +13,6 @@ import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.lv.note.personalnote.ui.base.BaseFragment
 import com.lv.note.personalnote.ui.base.MvpPresenter
-import com.lv.note.personalnote.ui.base.MvpView
 
 import org.jetbrains.anko.toast
 
@@ -78,12 +79,17 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
         return (activity as MvpActivity<*, *>).popBackCurrentFragment()
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     override fun hasPermission(permission: String): Boolean {
         return (activity as MvpActivity<*, *>).hasPermission(permission)
     }
 
     override fun requestPermissionsSafely(permissionArray: Array<String>, requestId: Int) {
         (activity as MvpActivity<*, *>).requestPermissionsSafely(permissionArray, requestId)
+    }
+
+    override fun safeFinishActivity() {
+        (activity as MvpActivity<*, *>).safeFinishActivity()
     }
 
     override fun showShortToast(message: String) {

@@ -1,14 +1,22 @@
 package com.fabsv.believers.believers.ui.module.login
 
 import android.content.Context
+import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeAutoRetrievalTimeOutEvent
+import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeSentEvent
+import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
+import com.androidhuman.rxfirebase2.auth.PhoneAuthVerificationCompleteEvent
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
+import com.fabsv.believers.believers.util.methods.RxUtils
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.*
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
 import org.jetbrains.anko.info
 
 class LoginPresenter(private val context: Context, private val appPreferencesHelper: AppPreferencesHelper) :
@@ -17,19 +25,72 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
     private var compositeDisposable: CompositeDisposable
     private var loginInteractor: LoginInteractor
 
-    override fun validate() {
-        val phoneNumberObservable: Observable<Boolean> = getView()!!
-                .getPhoneNumberField()
-                .map { it: CharSequence ->
-                    it.toString().length == 10
-                }
-                .doOnNext { isValid: Boolean ->
-                    updateLoginButtonStatus(isValid)
-                }
-        val phoneNumberDisposable = phoneNumberObservable.subscribe()
-        compositeDisposable.add(phoneNumberDisposable)
+    //firebase phone auth
+    private var mResendToken: PhoneAuthProvider.ForceResendingToken? = null
+    private var mVerificationId: String? = null
 
-        val loginOperationObservable: Observable<Boolean> = getView()!!
+    override fun validate() {
+        val phoneNumberObservable: Observable<Boolean>? = getPhoneNumberObservable()
+        val phoneNumberDisposable = phoneNumberObservable!!.subscribe()
+        this.compositeDisposable.add(phoneNumberDisposable)
+
+        val loginOperationObservable: Observable<Boolean>? = getLoginOperationObservable()
+        val loginOperationDisposable = loginOperationObservable!!.subscribe()
+        this.compositeDisposable.add(loginOperationDisposable)
+
+        val retryButtonClickObservable: Observable<Boolean>? = getRetryButtonClickObservable()
+        val retryButtonClickDisposable = retryButtonClickObservable!!.subscribe()
+        this.compositeDisposable.add(retryButtonClickDisposable)
+
+        val changeNumberClickObservable: Observable<Boolean>? = getChangeNumberClickObservable()
+        val changeNumberClickDisposable = changeNumberClickObservable!!.subscribe()
+        this.compositeDisposable.add(changeNumberClickDisposable)
+
+        val otpNumberObservable: Observable<Boolean>? = getOtpNumberObservable()
+        val otpNumberDisposable = otpNumberObservable!!.subscribe()
+        this.compositeDisposable.add(otpNumberDisposable)
+
+
+        val verifyOtpClickObservable: Observable<Boolean>? = getVerifyOtpClickObservable()
+        val verifyOtpClickDisposable = verifyOtpClickObservable!!.subscribe()
+        this.compositeDisposable.add(verifyOtpClickDisposable)
+    }
+
+    override fun showHomeFragment() {
+        if (isViewAttached()) {
+            getView()!!.showFragment(HomeFragment.getInstance(), false)
+        }
+    }
+
+    override fun updateVerifyAuthCodeLayoutStatus(showVerifyLayout: Boolean) {
+        if (isViewAttached()) {
+            getView()!!.updateVerifyAuthCodeLayoutStatus(showVerifyLayout)
+        }
+    }
+
+    override fun updateOtpAttemptFailRetryLayoutStatus(isShowOtpRetryLayout: Boolean) {
+        if (isViewAttached()) {
+            getView()!!.updateOtpAttemptFailRetryLayoutStatus(isShowOtpRetryLayout)
+        }
+    }
+
+    override fun onPhoneAuthVerificationCompleteEvent(): Boolean {
+        updateLoginOperation(true)
+        return true
+    }
+
+    override fun resetScreen() {
+        if (isViewAttached()) {
+            getView()!!.resetScreen()
+        }
+    }
+
+    override fun unSubscribeValidations() {
+        clearCompositeDisposable()
+    }
+
+    private fun getLoginOperationObservable(): Observable<Boolean>? {
+        return getView()!!
                 .getLoginButtonClick()
                 .map { t: Any -> true }
                 .map { clicked: Boolean -> getView()!!.getPhoneNumberFieldValue() }
@@ -41,27 +102,100 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                 .doOnNext { isSuccessful: Boolean ->
                     if (isSuccessful) {
                         updateUserPrefs(isSuccessful, getView()!!.getPhoneNumberFieldValue())
+                    } else {
+                        updateLoginOperation(false)
                     }
-                    updateLoginOperation(isSuccessful)
                 }
-        val loginOperationDisposable = loginOperationObservable.subscribe()
-        compositeDisposable.add(loginOperationDisposable)
+                .filter { isSuccessful: Boolean ->
+                    isSuccessful
+                }
+                .switchMap { loginSuccess: Boolean ->
+                    getFirebaseAuthAndEventsHandling()
+                }
     }
 
-    override fun showHomeFragment() {
+    private fun getRetryButtonClickObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getRetryButtonClick()
+                .map { event: Any -> true }
+                .switchMap { retryClicked: Boolean ->
+                    getFirebaseAuthAndEventsHandling()
+                }
+    }
+
+    private fun getFirebaseAuthAndEventsHandling(): Observable<Boolean> {
+        return loginInteractor.getFirebasePhoneAuthObservable(getView()!!.getPhoneNumberFieldValue())!!
+                .map { event: PhoneAuthEvent ->
+                    error(event.toString())
+                    if (event is PhoneAuthVerificationCompleteEvent) {
+                        onPhoneAuthVerificationCompleteEvent()
+                    } else if (event is PhoneAuthCodeSentEvent) {
+                        onPhoneAuthCodeSentEvent(event)
+                    } else if (event is PhoneAuthCodeAutoRetrievalTimeOutEvent) {
+                        onPhoneAuthCodeAutoRetrievalTimeOutEvent()
+                    } else if (event is FirebaseAuthInvalidCredentialsException) {
+                        return@map false
+                    } else {
+                        return@map false
+                    }
+                }
+                .doOnError { error: Throwable? ->
+                    error(error)
+                }
+                .share()
+    }
+
+    private fun getChangeNumberClickObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getChangeNumberButtonClick()
+                .map { event: Any -> true }
+                .doOnNext { changeNumberClicked: Boolean ->
+                    resetScreen()
+                }
+    }
+
+    private fun getOtpNumberObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getOtpNumberObservable()
+                .map { otpEntered: CharSequence -> otpEntered.length == 6 }
+                .doOnNext { isValidOtpFormat: Boolean ->
+                    updateVerifyOtpButtonStatus(isValidOtpFormat)
+                }
+    }
+
+    private fun getVerifyOtpClickObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getVerifyOtpButtonClick()
+                .map { event: Any -> true }
+                .map { verifyOtpClicked: Boolean -> getView()!!.getVerifyOtpFieldValue() }
+                .switchMap { otpEntered: String ->
+                    RxUtils.makeObservable(
+                            PhoneAuthProvider.getCredential(mVerificationId!!, otpEntered)
+                    )
+                }
+                .switchMap { credential: PhoneAuthCredential ->
+                    RxUtils.makeObservable(FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { task: Task<AuthResult> ->
+                        updateLoginOperation(task.isSuccessful)
+                    })
+                }
+                .map { t: Task<AuthResult> -> true }
+    }
+
+    private fun getPhoneNumberObservable(): Observable<Boolean>? {
+        return getView()!!
+                .getPhoneNumberField()
+                .map { it: CharSequence ->
+                    it.toString().length == 10
+                }
+                .doOnNext { isValid: Boolean ->
+                    updateLoginButtonStatus(isValid)
+                }
+    }
+
+    private fun updateLoginOperation(isSuccessful: Boolean) {
+        info("updateLoginOperation " + isSuccessful)
         if (isViewAttached()) {
-            getView()!!.showFragment(HomeFragment.getInstance(), false)
-        }
-    }
-
-    override fun unSubscribeValidations() {
-        clearCompositeDisposable()
-    }
-
-    private fun updateLoginOperation(successful: Boolean) {
-        info("updateLoginOperation " + successful)
-        if (isViewAttached()) {
-            if (successful) {
+            if (isSuccessful) {
                 getView()!!.onLoginSuccess()
                 getView()!!.resetScreen()
             } else {
@@ -81,6 +215,24 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
+    private fun updateVerifyOtpButtonStatus(isValidOtpFormat: Boolean) {
+        if (isViewAttached()) {
+            getView()!!.updateVerifyOtpButtonStatus(isValidOtpFormat)
+        }
+    }
+
+    private fun onPhoneAuthCodeSentEvent(phoneAuthCodeSentEvent: PhoneAuthCodeSentEvent): Boolean {
+        mVerificationId = phoneAuthCodeSentEvent.verificationId()
+        mResendToken = phoneAuthCodeSentEvent.forceResendingToken()
+        updateVerifyAuthCodeLayoutStatus(true)
+        return false
+    }
+
+    private fun onPhoneAuthCodeAutoRetrievalTimeOutEvent(): Boolean {
+        updateOtpAttemptFailRetryLayoutStatus(true)
+        return false
+    }
+
     private fun clearCompositeDisposable() {
         if (null != compositeDisposable && !compositeDisposable.isDisposed) {
             compositeDisposable.clear()
@@ -94,13 +246,13 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
-    init {
-        this.compositeDisposable = CompositeDisposable()
-        this.loginInteractor = LoginInteractor(context, appPreferencesHelper)
-    }
-
     override fun detachView(retainInstance: Boolean) {
         disposeCompositeDisposable()
         super.detachView(retainInstance)
+    }
+
+    init {
+        this.compositeDisposable = CompositeDisposable()
+        this.loginInteractor = LoginInteractor(context, appPreferencesHelper)
     }
 }

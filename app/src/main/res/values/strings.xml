@@ -11,4 +11,12 @@
     <string name="approve">Approve</string>
     <string name="scan_again">Scan Again</string>
     <string name="app_will_not_work_without_camera_permission">App will not work without camera permission</string>
+    <string name="login">Login</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="enter_otp_here">Enter OTP here</string>
+    <string name="enter_phone_number">Enter phone number</string>
+    <string name="change_number">Change Number</string>
+    <string name="waiting_for_otp_to_verify_your_phone_number">Waiting for otp to verify your phone number</string>
+    <string name="otp_verification_attempt_failed_nplease_retry_or_try_changing_phone_number">OTP verification attempt failed. \nPlease retry or try changing phone number.</string>
+    <string name="retry">Retry</string>
 </resources>

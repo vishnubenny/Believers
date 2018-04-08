@@ -31,6 +31,10 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         return RxTextView.textChanges(edit_text_phone_number)
     }
 
+    override fun getOtpNumberObservable(): InitialValueObservable<CharSequence> {
+        return RxTextView.textChanges(edit_text_otp)
+    }
+
     override fun updateLoginButtonStatus(enable: Boolean) {
         button_login.isEnabled = enable
         if (enable) {
@@ -38,12 +42,66 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         }
     }
 
+    override fun updateVerifyOtpButtonStatus(isValidOtp: Boolean) {
+        button_verify_otp.isEnabled = isValidOtp
+        if (isValidOtp) {
+            utilityMethods.hideKeyboard(activity!!)
+        }
+    }
+
+    /**
+     * Updates verify/login layout visibility
+     */
+    override fun updateVerifyAuthCodeLayoutStatus(showVerifyLayout: Boolean) {
+        if (showVerifyLayout) {
+            //hide layout login and layout retry attempt
+            layout_login.visibility = View.GONE
+            layout_retry_attempt.visibility = View.GONE
+            //make visible layout verify
+            layout_verify.visibility = View.VISIBLE
+        } else {
+            //hide layout
+            layout_verify.visibility = View.GONE
+            layout_retry_attempt.visibility = View.GONE
+            //make visible layout login
+            layout_login.visibility = View.VISIBLE
+            //phone number edit text set default
+            phoneNumberEditTextSetDefault()
+        }
+    }
+
+    override fun updateOtpAttemptFailRetryLayoutStatus(isShowOtpRetryLayout: Boolean) {
+        if (isShowOtpRetryLayout) {
+            //hide login and verify otp layout
+            layout_login.visibility = View.GONE
+            layout_verify.visibility = View.GONE
+            //show otp auth attempt fail: retry layout
+            layout_retry_attempt.visibility = View.VISIBLE
+        }
+    }
+
     override fun getLoginButtonClick(): Observable<Any> {
         return RxView.clicks(button_login)
     }
 
+    override fun getVerifyOtpButtonClick(): Observable<Any> {
+        return RxView.clicks(button_verify_otp)
+    }
+
+    override fun getRetryButtonClick(): Observable<Any> {
+        return RxView.clicks(button_retry)
+    }
+
+    override fun getChangeNumberButtonClick(): Observable<Any> {
+        return RxView.clicks(button_change_number)
+    }
+
     override fun getPhoneNumberFieldValue(): String {
         return edit_text_phone_number.text.toString()
+    }
+
+    override fun getVerifyOtpFieldValue(): String {
+        return edit_text_otp.text.toString()
     }
 
     override fun onLoginSuccess() {
@@ -57,7 +115,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
      */
     override fun resetScreen() {
         presenter!!.unSubscribeValidations()
-        edit_text_phone_number.setText("")
+        updateVerifyAuthCodeLayoutStatus(false)
         presetLoggedInUserPhoneNumber()
         presenter!!.validate()
     }
@@ -72,6 +130,11 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
             edit_text_phone_number.setText(loggedInUserPhoneNumber)
             edit_text_phone_number.setSelection(edit_text_phone_number.length())
         }
+    }
+
+    private fun phoneNumberEditTextSetDefault() {
+        edit_text_phone_number.setText("")
+        edit_text_phone_number.requestFocus()
     }
 
     companion object {

@@ -1,4 +1,4 @@
-package com.lv.note.personalnote.ui.base
+package com.fabsv.believers.believers.ui.base
 
 import android.support.v4.app.Fragment
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
@@ -21,4 +21,6 @@ interface MvpView {
     fun hasPermission(permission: String): Boolean
 
     fun requestPermissionsSafely(permissionArray: Array<String>, requestId: Int)
+
+    fun safeFinishActivity()
 }

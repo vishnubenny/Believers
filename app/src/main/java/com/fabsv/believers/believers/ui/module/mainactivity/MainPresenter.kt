@@ -1,6 +1,5 @@
 package com.fabsv.believers.believers.ui.module.mainactivity
 
-import android.app.Activity
 import android.content.Context
 import android.support.v4.app.Fragment
 import com.fabsv.believers.believers.R
@@ -31,8 +30,6 @@ class MainPresenter(private val context: Context, private val appPreferencesHelp
     override fun onPermissionDenied() {
         if (isViewAttached()) {
             getView()!!.showPermissionRequiredAlert()
-            getView()!!.showShortToast(context.getString(R.string.app_will_not_work_without_camera_permission))
-            (context as Activity).finish()
         }
     }
 
