@@ -9,6 +9,7 @@ import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelpe
 import com.fabsv.believers.believers.data.source.remote.model.User
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiClient
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiInterface
+import com.fabsv.believers.believers.data.source.remote.retrofit.ServiceGenerator
 import com.fabsv.believers.believers.util.methods.RxUtils
 import com.google.firebase.auth.PhoneAuthProvider
 import io.reactivex.Observable
@@ -40,6 +41,7 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
     }
 
     init {
-        this.apiInterface = ApiClient.getClient()!!.create(ApiInterface::class.java)
+        /*this.apiInterface = ApiClient.getClient()!!.create(ApiInterface::class.java)*/
+        this.apiInterface = ServiceGenerator.createService(ApiInterface::class.java)
     }
 }
