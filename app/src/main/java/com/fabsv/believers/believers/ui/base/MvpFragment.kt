@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.ui.utils.inflate
 import com.lv.note.personalnote.ui.base.BaseFragment
 import com.lv.note.personalnote.ui.base.MvpPresenter
 
@@ -25,7 +26,7 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
     private lateinit var appPreferenceHelper: AppPreferencesHelper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView: View = inflater.inflate(getLayoutResId(), container, false)
+        val rootView = container!!.inflate(getLayoutResId())
         return rootView
     }
 
