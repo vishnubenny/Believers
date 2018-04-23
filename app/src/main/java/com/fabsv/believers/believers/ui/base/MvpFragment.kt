@@ -25,6 +25,9 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
     private var mActivity: Activity? = null
     private lateinit var appPreferenceHelper: AppPreferencesHelper
 
+    /**
+     * Android extension utils is used
+     */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = container!!.inflate(getLayoutResId())
         return rootView
