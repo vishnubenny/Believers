@@ -96,6 +96,12 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
         (activity as MvpActivity<*, *>).safeFinishActivity()
     }
 
+    override fun updateToolbarTitle(title: String?, homeUpEnabled: Boolean) {
+        title?.let {
+            (activity as MvpActivity<*, *>).updateToolbarTitle(title, homeUpEnabled)
+        }
+    }
+
     override fun showShortToast(message: String) {
         activity!!.toast(message)
     }

@@ -18,7 +18,7 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
     }
 
     fun loginWithPhoneNumber(phoneNumber: String): Observable<Boolean> {
-        return userLocalDataSource.loginWithPhoneNumber(phoneNumber)
+        return userRemoteDataSource.loginWithPhoneNumber(phoneNumber)
     }
 
     fun onLogoutClicked(): Observable<Boolean> {

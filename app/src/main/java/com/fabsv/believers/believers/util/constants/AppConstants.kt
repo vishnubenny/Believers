@@ -25,7 +25,7 @@ class AppConstants {
 
     class ApiConstants {
         companion object {
-            val BASE_URL = "http://172.16.0.237:8888/project/test/"
+            val BASE_URL = "http://192.162.0.8:8081/api/MandalamMobilApp/"
         }
     }
 

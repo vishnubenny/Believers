@@ -6,14 +6,14 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.RxPhoneAuthProvider
 import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
-import com.fabsv.believers.believers.data.source.remote.model.User
-import com.fabsv.believers.believers.data.source.remote.retrofit.ApiClient
+import com.fabsv.believers.believers.data.source.remote.model.LoginResponse
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiInterface
 import com.fabsv.believers.believers.data.source.remote.retrofit.ServiceGenerator
 import com.fabsv.believers.believers.util.methods.RxUtils
 import com.google.firebase.auth.PhoneAuthProvider
 import io.reactivex.Observable
 import org.jetbrains.anko.AnkoLogger
+import retrofit2.Response
 import java.util.concurrent.TimeUnit
 
 class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPreferencesHelper) :
@@ -22,7 +22,10 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
 
     override fun loginWithPhoneNumber(phoneNumber: String): Observable<Boolean> {
         return this.apiInterface.userLogin(phoneNumber)
-                .map { user: User -> "y".contentEquals(user.getStatus()!!) }
+                .map { loginResponse: Response<LoginResponse> ->
+                    val userId = loginResponse.body()?.userId
+                    return@map 200 == loginResponse.code()
+                }
     }
 
     override fun onLogoutClicked(): Observable<Boolean> {
@@ -37,7 +40,7 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
 
     override fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
         return this.apiInterface.updateApproveStatusOfUser(phoneNumber, qrCode, updatedStatus)
-                .map { user: User -> "y".contentEquals(user.getStatus()!!) }
+                .map { loginResponse: LoginResponse -> 200 == loginResponse.userId }
     }
 
     init {

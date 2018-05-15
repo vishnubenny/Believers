@@ -117,6 +117,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         presenter!!.unSubscribeValidations()
         updateVerifyAuthCodeLayoutStatus(false)
         presetLoggedInUserPhoneNumber()
+        presetScreen()
         presenter!!.validate()
     }
 
@@ -135,6 +136,10 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     private fun phoneNumberEditTextSetDefault() {
         edit_text_phone_number.setText("")
         edit_text_phone_number.requestFocus()
+    }
+
+    private fun presetScreen() {
+        updateToolbarTitle(activity?.resources?.getString(R.string.login), false)
     }
 
     companion object {

@@ -10,6 +10,7 @@ import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.lv.note.personalnote.ui.base.BaseActivity
 import com.lv.note.personalnote.ui.base.MvpPresenter
+import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
 /**
@@ -33,6 +34,11 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
     override fun onDestroy() {
         super.onDestroy()
         presenter!!.detachView(false)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        super.onBackPressed()
+        return true
     }
 
     protected abstract fun onPrepareActivity()
@@ -90,6 +96,14 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
             supportFragmentManager.popBackStackImmediate()
         }
         finish()
+    }
+
+    override fun updateToolbarTitle(title: String?, homeUpEnabled: Boolean) {
+        title?.let {
+            toolbar.title = title
+            setSupportActionBar(toolbar)
+        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(homeUpEnabled)
     }
 
     fun getCurrentFragmentInstance(): Fragment {

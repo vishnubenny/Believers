@@ -18,4 +18,5 @@
     <string name="waiting_for_otp_to_verify_your_phone_number">Waiting for otp to verify your phone number</string>
     <string name="otp_verification_attempt_failed_nplease_retry_or_try_changing_phone_number">OTP verification attempt failed. \nPlease retry or try changing phone number.</string>
     <string name="retry">Retry</string>
+    <string name="home">Home</string>
 </resources>

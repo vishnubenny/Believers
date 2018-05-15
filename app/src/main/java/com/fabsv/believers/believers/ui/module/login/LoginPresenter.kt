@@ -93,7 +93,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         return getView()!!
                 .getLoginButtonClick()
                 .map { t: Any -> true }
-                .map { clicked: Boolean -> getView()!!.getPhoneNumberFieldValue() }
+                .map { clicked: Boolean -> getView()?.getPhoneNumberFieldValue() }
                 .observeOn(Schedulers.io())
                 .switchMap { phoneNumber: String ->
                     loginInteractor.loginWithPhoneNumber(phoneNumber)

@@ -11,8 +11,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresenter>(), HomeContract.HomeView {
     override fun onPrepareFragment(view: View?) {
 
-        presenter!!.validate()
-        presenter!!.showLoggedInUserDetail()
+        resetScreen()
     }
 
     override fun createPresenter(): HomePresenter {
@@ -21,6 +20,12 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_home
+    }
+
+    private fun resetScreen() {
+        presenter?.validate()
+        presenter?.showLoggedInUserDetail()
+        presetScreen()
     }
 
     override fun getLogoutButtonClickEvent(): Observable<Any> {
@@ -37,6 +42,10 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
 
     override fun showLoggedInUserPhoneNumber(phoneNumber: String) {
         text_view_logged_in_user_phone_number.text = phoneNumber
+    }
+
+    private fun presetScreen() {
+        updateToolbarTitle(activity?.resources?.getString(R.string.home), true)
     }
 
     companion object {

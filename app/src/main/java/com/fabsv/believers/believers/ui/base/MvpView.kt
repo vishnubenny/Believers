@@ -23,4 +23,6 @@ interface MvpView {
     fun requestPermissionsSafely(permissionArray: Array<String>, requestId: Int)
 
     fun safeFinishActivity()
+
+    fun updateToolbarTitle(title: String?, homeUpEnabled: Boolean)
 }
