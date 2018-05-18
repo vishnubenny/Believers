@@ -6,7 +6,9 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.RxPhoneAuthProvider
 import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.data.source.remote.model.LoginResponse
+import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiInterface
 import com.fabsv.believers.believers.data.source.remote.retrofit.ServiceGenerator
 import com.fabsv.believers.believers.util.methods.RxUtils
@@ -18,12 +20,16 @@ import java.util.concurrent.TimeUnit
 
 class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPreferencesHelper) :
         UserDataSource, AnkoLogger {
-    private var apiInterface: ApiInterface
+    private var apiInterface: ApiInterface = ServiceGenerator.createService(ApiInterface::class.java)
 
-    override fun loginWithPhoneNumber(phoneNumber: String): Observable<Boolean> {
-        return this.apiInterface.userLogin(phoneNumber)
+    override fun loginWithPhoneNumber(loginRequest: LoginRequest): Observable<Boolean> {
+        return this.apiInterface.userLogin(loginRequest.username, loginRequest.password, loginRequest.mobileNumber)
                 .map { loginResponse: Response<LoginResponse> ->
-                    val userId = loginResponse.body()?.userId
+                    if (200 == loginResponse.code()) {
+                        loginResponse.body()?.let {
+                            appPreferencesHelper.setUserData(it)
+                        }
+                    }
                     return@map 200 == loginResponse.code()
                 }
     }
@@ -43,8 +49,10 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
                 .map { loginResponse: LoginResponse -> 200 == loginResponse.userId }
     }
 
-    init {
-        /*this.apiInterface = ApiClient.getClient()!!.create(ApiInterface::class.java)*/
-        this.apiInterface = ServiceGenerator.createService(ApiInterface::class.java)
+    override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> {
+        return apiInterface.getUserProfile(qrCode, mandalamId, meetingSlNo)
+                .map { t: Response<UserProfileResponse> ->
+                    t
+                }
     }
 }

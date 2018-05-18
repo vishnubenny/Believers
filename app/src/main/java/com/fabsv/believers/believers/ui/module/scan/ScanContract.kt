@@ -13,6 +13,7 @@ interface ScanContract {
         fun getScanFieldTextChanges(): InitialValueObservable<CharSequence>
         fun resetScanCameraView()
         fun updateSubmitButtonState(isEnable: Boolean)
+        fun getQrCodeFieldValue(): String
         fun resetScanScreen()
     }
 

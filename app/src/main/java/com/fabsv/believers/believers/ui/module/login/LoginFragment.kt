@@ -3,6 +3,7 @@ package com.fabsv.believers.believers.ui.module.login
 import android.content.Context
 import android.view.View
 import com.fabsv.believers.believers.R
+import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.ui.base.MvpFragment
 import com.fabsv.believers.believers.util.methods.utilityMethods
 import com.jakewharton.rxbinding2.InitialValueObservable
@@ -27,6 +28,14 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         return R.layout.fragment_login
     }
 
+    override fun getUsernameField(): InitialValueObservable<CharSequence> {
+        return RxTextView.textChanges(edit_text_username)
+    }
+
+    override fun getPasswordField(): InitialValueObservable<CharSequence> {
+        return RxTextView.textChanges(edit_text_password)
+    }
+
     override fun getPhoneNumberField(): InitialValueObservable<CharSequence> {
         return RxTextView.textChanges(edit_text_phone_number)
     }
@@ -37,9 +46,6 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
 
     override fun updateLoginButtonStatus(enable: Boolean) {
         button_login.isEnabled = enable
-        if (enable) {
-            utilityMethods.hideKeyboard(activity!!)
-        }
     }
 
     override fun updateVerifyOtpButtonStatus(isValidOtp: Boolean) {
@@ -66,7 +72,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
             //make visible layout login
             layout_login.visibility = View.VISIBLE
             //phone number edit text set default
-            phoneNumberEditTextSetDefault()
+            setFieldsDefault()
         }
     }
 
@@ -96,9 +102,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         return RxView.clicks(button_change_number)
     }
 
-    override fun getPhoneNumberFieldValue(): String {
-        return edit_text_phone_number.text.toString()
-    }
+    override fun getLoginRequestModel() = LoginRequest(getUsername(), getPassword(), getMobile())
 
     override fun getVerifyOtpFieldValue(): String {
         return edit_text_otp.text.toString()
@@ -116,7 +120,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     override fun resetScreen() {
         presenter!!.unSubscribeValidations()
         updateVerifyAuthCodeLayoutStatus(false)
-        presetLoggedInUserPhoneNumber()
+        presetLoggedInUserLoginDetails()
         presetScreen()
         presenter!!.validate()
     }
@@ -125,22 +129,41 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         showShortToast(getString(R.string.something_went_wrong_please_contact_admin))
     }
 
-    private fun presetLoggedInUserPhoneNumber() {
-        val loggedInUserPhoneNumber: String = getAppPreferencesHelper().getLoggedInUserPhoneNumber()
-        if (loggedInUserPhoneNumber.isNotEmpty()) {
-            edit_text_phone_number.setText(loggedInUserPhoneNumber)
-            edit_text_phone_number.setSelection(edit_text_phone_number.length())
+    private fun presetLoggedInUserLoginDetails() {
+        val loggedInUserUsername = getAppPreferencesHelper().getLoggedInUserUsername()
+        loggedInUserUsername?.let {
+            if (it.isNotEmpty()) {
+                edit_text_username.setText(it)
+            }
         }
+
+        val loggedInUserPhoneNumber: String = getAppPreferencesHelper().getLoggedInUserPhoneNumber()
+        if (loggedInUserPhoneNumber.isNotEmpty())
+            edit_text_phone_number.setText(loggedInUserPhoneNumber)
+
+        /*
+        If user already logged in successfully, then the username and password will preset in fields
+        In that case we have to request the focus in the password field
+         */
+        edit_text_password.requestFocus()
     }
 
-    private fun phoneNumberEditTextSetDefault() {
+    private fun setFieldsDefault() {
+        edit_text_username.setText("")
+        edit_text_password.setText("")
         edit_text_phone_number.setText("")
-        edit_text_phone_number.requestFocus()
+        edit_text_username.requestFocus()
     }
 
     private fun presetScreen() {
         updateToolbarTitle(activity?.resources?.getString(R.string.login), false)
     }
+
+    private fun getUsername() = edit_text_username.text.toString()
+
+    private fun getPassword() = edit_text_password.text.toString()
+
+    private fun getMobile() = edit_text_phone_number.text.toString()
 
     companion object {
         fun getInstance(): LoginFragment {

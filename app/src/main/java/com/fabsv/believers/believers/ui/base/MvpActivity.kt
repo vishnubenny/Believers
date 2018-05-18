@@ -1,6 +1,7 @@
 package com.fabsv.believers.believers.ui.base
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment
 import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.util.methods.utilityMethods
 import com.lv.note.personalnote.ui.base.BaseActivity
 import com.lv.note.personalnote.ui.base.MvpPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -64,6 +66,10 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
         } else {
             supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
         }
+    }
+
+    override fun hideSoftKeyboard() {
+        utilityMethods.hideKeyboard(this as Activity)
     }
 
 

@@ -6,6 +6,7 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeSentEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthVerificationCompleteEvent
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
 import com.fabsv.believers.believers.util.methods.RxUtils
 import com.google.android.gms.tasks.Task
@@ -14,6 +15,7 @@ import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
@@ -30,9 +32,14 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
     private var mVerificationId: String? = null
 
     override fun validate() {
+        val usernameObservable: Observable<Boolean>? = getUsernameObservable()
+        val passwordObservable: Observable<Boolean>? = getPasswordObservable()
         val phoneNumberObservable: Observable<Boolean>? = getPhoneNumberObservable()
-        val phoneNumberDisposable = phoneNumberObservable!!.subscribe()
-        this.compositeDisposable.add(phoneNumberDisposable)
+
+        val combinedObservable = Observable.combineLatest(usernameObservable, passwordObservable, phoneNumberObservable,
+                Function3 { usernameStatus: Boolean, passwordStatus: Boolean, mobileStatus: Boolean -> usernameStatus && passwordStatus && mobileStatus })
+        val combinedDisposable = combinedObservable?.doOnNext { status: Boolean? -> status?.let { updateLoginButtonStatus(it) } }?.subscribe()
+        combinedDisposable?.let { this.compositeDisposable.add(it) }
 
         val loginOperationObservable: Observable<Boolean>? = getLoginOperationObservable()
         val loginOperationDisposable = loginOperationObservable!!.subscribe()
@@ -93,25 +100,28 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         return getView()!!
                 .getLoginButtonClick()
                 .map { t: Any -> true }
-                .map { clicked: Boolean -> getView()?.getPhoneNumberFieldValue() }
+                .map { clicked: Boolean ->
+                    getView()?.hideSoftKeyboard()
+                    return@map getView()?.getLoginRequestModel()
+                }
                 .observeOn(Schedulers.io())
-                .switchMap { phoneNumber: String ->
-                    loginInteractor.loginWithPhoneNumber(phoneNumber)
+                .switchMap { loginRequest: LoginRequest ->
+                    loginInteractor.loginWithPhoneNumber(loginRequest)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { isSuccessful: Boolean ->
                     if (isSuccessful) {
-                        updateUserPrefs(isSuccessful, getView()!!.getPhoneNumberFieldValue())
-                    } else {
-                        updateLoginOperation(false)
+                        getView()?.getLoginRequestModel()?.username?.let { appPreferencesHelper.setLoggedInUserUsername(it) }
+                        getView()?.getLoginRequestModel()?.mobileNumber?.let { updateUserPrefs(isSuccessful, it) }
                     }
+                    updateLoginOperation(isSuccessful)
                 }
-                .filter { isSuccessful: Boolean ->
-                    isSuccessful
-                }
-                .switchMap { loginSuccess: Boolean ->
-                    getFirebaseAuthAndEventsHandling()
-                }
+        /*.filter { isSuccessful: Boolean ->
+            isSuccessful
+        }
+        .switchMap { loginSuccess: Boolean ->
+            getFirebaseAuthAndEventsHandling()
+        }*/
     }
 
     private fun getRetryButtonClickObservable(): Observable<Boolean>? {
@@ -124,7 +134,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
     }
 
     private fun getFirebaseAuthAndEventsHandling(): Observable<Boolean> {
-        return loginInteractor.getFirebasePhoneAuthObservable(getView()!!.getPhoneNumberFieldValue())!!
+        return getView()?.getLoginRequestModel()?.mobileNumber?.let { loginInteractor.getFirebasePhoneAuthObservable(it) }!!
                 .map { event: PhoneAuthEvent ->
                     error(event.toString())
                     if (event is PhoneAuthVerificationCompleteEvent) {
@@ -181,16 +191,14 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                 .map { t: Task<AuthResult> -> true }
     }
 
-    private fun getPhoneNumberObservable(): Observable<Boolean>? {
-        return getView()!!
-                .getPhoneNumberField()
-                .map { it: CharSequence ->
-                    it.toString().length == 10
-                }
-                .doOnNext { isValid: Boolean ->
-                    updateLoginButtonStatus(isValid)
-                }
-    }
+    private fun getUsernameObservable() =
+            getView()?.getUsernameField()?.map { t: CharSequence -> t.isNotEmpty() }
+
+    private fun getPasswordObservable(): Observable<Boolean>? =
+            getView()?.getPasswordField()?.map { t: CharSequence -> t.isNotEmpty() }
+
+    private fun getPhoneNumberObservable() =
+            getView()?.getPhoneNumberField()?.map { it: CharSequence -> it.toString().length == 10 }
 
     private fun updateLoginOperation(isSuccessful: Boolean) {
         info("updateLoginOperation " + isSuccessful)
@@ -206,12 +214,12 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
 
     private fun updateUserPrefs(validLogin: Boolean, phoneNumberFieldValue: String) {
         appPreferencesHelper.setLoggedIn(validLogin)
-        appPreferencesHelper.setLoggedInUserPhoneNumber(phoneNumberFieldValue)
+        appPreferencesHelper.setLoggedInUserMobile(phoneNumberFieldValue)
     }
 
     private fun updateLoginButtonStatus(isEnable: Boolean) {
         if (isViewAttached()) {
-            getView()!!.updateLoginButtonStatus(isEnable)
+            getView()?.updateLoginButtonStatus(isEnable)
         }
     }
 

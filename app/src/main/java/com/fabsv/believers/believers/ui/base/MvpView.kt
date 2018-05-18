@@ -14,6 +14,8 @@ interface MvpView {
 
     fun showFragment(fragment: Fragment, isAddToBackStack: Boolean)
 
+    fun hideSoftKeyboard()
+
     fun getAppPreferencesHelper(): AppPreferencesHelper
 
     fun popBackCurrentFragment(): Boolean

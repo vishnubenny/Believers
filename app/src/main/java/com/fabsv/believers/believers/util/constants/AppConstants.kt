@@ -3,7 +3,7 @@ package com.fabsv.believers.believers.util.constants
 class AppConstants {
     class Prefs {
         companion object {
-            val APP_PREFERENCES: String = "APP_PREFERENCES"
+            const val APP_PREFERENCES: String = "APP_PREFERENCES"
         }
     }
 
@@ -18,22 +18,26 @@ class AppConstants {
 
     class CardDataConstants {
         companion object {
-            val CARD_NUMBER_MINIMUM_LENGTH: Int = 6
-
+            const val CARD_NUMBER_MINIMUM_LENGTH: Int = 2
         }
     }
 
     class ApiConstants {
         companion object {
-            val BASE_URL = "http://192.162.0.8:8081/api/MandalamMobilApp/"
+            const val BASE_URL = "http://192.168.0.8:8081/api/MandalamMobilApp/"
+//            val BASE_URL = "http://www.mocky.io/v2/"
         }
     }
 
     class PermissionConstants {
         companion object {
-            val REQUEST_ID_CAMERA = 10
-
+            const val REQUEST_ID_CAMERA = 10
         }
     }
 
+    class SerializableConstants {
+        companion object {
+            const val USER_PROFILE : String = "USER_PROFILE"
+        }
+    }
 }

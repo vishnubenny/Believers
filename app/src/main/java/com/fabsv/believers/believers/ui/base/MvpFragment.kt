@@ -74,6 +74,10 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
         (activity as MvpActivity<*, *>).showFragment(fragment, isAddToBackStack)
     }
 
+    override fun hideSoftKeyboard() {
+        (activity as MvpActivity<*, *>).hideSoftKeyboard()
+    }
+
     override fun getAppPreferencesHelper(): AppPreferencesHelper {
         appPreferenceHelper = (mActivity!!.applicationContext as App).getAppPreferencesHelper()
         return appPreferenceHelper

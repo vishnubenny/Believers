@@ -14,8 +14,6 @@ import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_scan.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
-import android.os.Bundle
-
 
 
 class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresenter>(),
@@ -44,7 +42,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     override fun getScanFieldTextChanges(): InitialValueObservable<CharSequence> {
-        return RxTextView.textChanges(edit_text_card_number)
+        return RxTextView.textChanges(edit_text_qr_code)
     }
 
     override fun resetScanCameraView() {
@@ -56,14 +54,18 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         button_submit.isEnabled = isEnable
     }
 
+    override fun getQrCodeFieldValue(): String {
+        return edit_text_qr_code.text.toString()
+    }
+
     /**
      * Reset the scan screen : 1. UnSubscribe validations if any registered
      * 2. Reset the card number field. 3. Subscribe to the validations.
      */
     override fun resetScanScreen() {
-        presenter!!.unSubscribeValidations()
-        edit_text_card_number.text.clear()
-        presenter!!.validate()
+        presenter?.unSubscribeValidations()
+        presetScreen()
+        presenter?.validate()
     }
 
     override fun onResume() {
@@ -84,8 +86,8 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     override fun handleResult(result: Result?) {
         if (result!!.text.isNotEmpty()) {
-            edit_text_card_number.setText(result.text)
-            edit_text_card_number.setSelection(edit_text_card_number.length())
+            edit_text_qr_code.setText(result.text)
+            edit_text_qr_code.setSelection(edit_text_qr_code.length())
         }
     }
 
@@ -108,6 +110,11 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         if (null != zXingScannerView) {
             zXingScannerView!!.stopCamera()
         }
+    }
+
+    private fun presetScreen() {
+        edit_text_qr_code.text.clear()
+        updateToolbarTitle(activity?.getString(R.string.scan_qr), homeUpEnabled = true)
     }
 
     fun onCameraPermissionGranted() {

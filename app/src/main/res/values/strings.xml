@@ -19,4 +19,9 @@
     <string name="otp_verification_attempt_failed_nplease_retry_or_try_changing_phone_number">OTP verification attempt failed. \nPlease retry or try changing phone number.</string>
     <string name="retry">Retry</string>
     <string name="home">Home</string>
+    <string name="enter_user_name">Enter username</string>
+    <string name="enter_password">Enter password</string>
+    <string name="no_recodrs_found_for_the_qr_code">No records found for the Qr code</string>
+    <string name="scan_qr">Scan Qr</string>
+    <string name="user_profile">User Profile</string>
 </resources>

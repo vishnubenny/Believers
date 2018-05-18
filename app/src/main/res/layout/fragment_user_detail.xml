@@ -50,7 +50,25 @@
                 android:id="@+id/image_user_pic"
                 android:layout_width="160dp"
                 android:layout_height="160dp"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/text_view_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/text_view_user_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/text_view_user_member_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
         </LinearLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

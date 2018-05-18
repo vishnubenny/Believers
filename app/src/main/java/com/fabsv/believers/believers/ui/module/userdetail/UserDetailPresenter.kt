@@ -26,6 +26,10 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         this.compositeDisposable.add(approveButtonDisposable)
     }
 
+    override fun unSubscribeValidations() {
+        clearCompositeDisposable()
+    }
+
     private fun getApproveButtonObservable(): Observable<Boolean>? {
         return getView()!!
                 .getApproveButtonClickEvent()

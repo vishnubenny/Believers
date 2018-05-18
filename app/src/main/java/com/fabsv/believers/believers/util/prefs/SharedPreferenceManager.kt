@@ -42,4 +42,20 @@ class SharedPreferenceManager {
     fun getValue(key: String, defaultValue: String): String {
         return mSettings!!.getString(key, defaultValue)
     }
+
+    /**
+     * Save Int value in the prefs
+     */
+    fun setValue(key: String, intValue: Int?) {
+        intValue?.let {
+            mEditor?.putInt(key, it)?.apply()
+        }
+    }
+
+    /**
+     * Method that returns the Int values stored in the shared preference
+     */
+    fun getValue(key: String, defaultValue: Int): Int {
+        return mSettings!!.getInt(key, defaultValue)
+    }
 }

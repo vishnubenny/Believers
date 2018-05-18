@@ -19,6 +19,7 @@ interface UserDetailContract {
 
     interface UserDetailPresenter : MvpPresenter<UserDetailContract.UserDetailView> {
         fun validate()
+        fun unSubscribeValidations()
 
     }
 }

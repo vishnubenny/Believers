@@ -45,7 +45,7 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
     }
 
     private fun presetScreen() {
-        updateToolbarTitle(activity?.resources?.getString(R.string.home), true)
+        updateToolbarTitle(activity?.resources?.getString(R.string.home), homeUpEnabled = false)
     }
 
     companion object {

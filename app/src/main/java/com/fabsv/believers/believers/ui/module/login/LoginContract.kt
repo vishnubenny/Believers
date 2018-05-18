@@ -1,5 +1,6 @@
 package com.fabsv.believers.believers.ui.module.login
 
+import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.ui.base.MvpView
 import com.jakewharton.rxbinding2.InitialValueObservable
 import com.lv.note.personalnote.ui.base.MvpPresenter
@@ -8,6 +9,8 @@ import io.reactivex.ObservableSource
 
 interface LoginContract {
     interface LoginView : MvpView {
+        fun getUsernameField(): InitialValueObservable<CharSequence>
+        fun getPasswordField(): InitialValueObservable<CharSequence>
         fun getPhoneNumberField(): InitialValueObservable<CharSequence>
         fun getOtpNumberObservable(): InitialValueObservable<CharSequence>
         fun updateLoginButtonStatus(enable: Boolean)
@@ -18,7 +21,7 @@ interface LoginContract {
         fun getVerifyOtpButtonClick(): Observable<Any>
         fun getRetryButtonClick(): Observable<Any>
         fun getChangeNumberButtonClick(): Observable<Any>
-        fun getPhoneNumberFieldValue(): String
+        fun getLoginRequestModel(): LoginRequest
         fun getVerifyOtpFieldValue(): String
         fun onLoginSuccess()
         fun onLoginFailure()
