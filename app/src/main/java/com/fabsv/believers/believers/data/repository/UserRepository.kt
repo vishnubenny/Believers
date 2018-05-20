@@ -7,6 +7,7 @@ import com.fabsv.believers.believers.data.source.local.UserLocalDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.UserRemoteDataSource
 import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
+import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
 import io.reactivex.Observable
 import retrofit2.Response
@@ -28,11 +29,10 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
         return userRemoteDataSource.getFirebasePhoneAuthObservable(phoneNumberFieldValue)
     }
 
-    fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
-        return userLocalDataSource.updateApproveStatusOfUser(phoneNumber, qrCode, updatedStatus)
-    }
-
     fun requestQrCodeData(qrCode: String): Observable<Response<UserProfileResponse>>? {
         return userRemoteDataSource.requestQrCodeData(qrCode, appPreferencesHelper.getUserData().mandalamId.toString(), appPreferencesHelper.getUserData().meetingSlNo.toString())
     }
+
+    fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
+            userRemoteDataSource.makeAttendancePresent(makeAttendancePresentModel)
 }

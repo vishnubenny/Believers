@@ -5,6 +5,7 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
+import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
 import com.fabsv.believers.believers.util.constants.AppConstants
 import com.fabsv.believers.believers.util.methods.RxUtils
@@ -29,16 +30,9 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
         return null
     }
 
-    override fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
-        val status: Boolean
-        if ("000000".contentEquals(qrCode)) {
-            status = false
-        } else {
-            status = true
-        }
-        return RxUtils.makeObservable(status)
-    }
-
     override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>>
             = Observable.just(Response.success(UserProfileResponse()))
+
+    override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
+            Observable.just(false)
 }

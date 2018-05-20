@@ -8,6 +8,7 @@ import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.data.source.remote.model.LoginResponse
+import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiInterface
 import com.fabsv.believers.believers.data.source.remote.retrofit.ServiceGenerator
@@ -44,15 +45,14 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
                 TimeUnit.SECONDS, context as Activity)
     }
 
-    override fun updateApproveStatusOfUser(phoneNumber: String, qrCode: String, updatedStatus: String): Observable<Boolean> {
-        return this.apiInterface.updateApproveStatusOfUser(phoneNumber, qrCode, updatedStatus)
-                .map { loginResponse: LoginResponse -> 200 == loginResponse.userId }
-    }
-
     override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> {
         return apiInterface.getUserProfile(qrCode, mandalamId, meetingSlNo)
                 .map { response: Response<UserProfileResponse> ->
                     response
                 }
     }
+
+    override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
+            apiInterface.makeAttendancePresent(makeAttendancePresentModel)
+                    .map { response: Response<Any> -> 200 == response.code() }
 }

@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream
 
 class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDetailContract.UserDetailPresenter>(),
         UserDetailContract.UserDetailView, AnkoLogger {
+    private var userProfileResponse : UserProfileResponse? = null
+
     override fun onPrepareFragment(view: View?) {
         resetScreen()
     }
@@ -40,9 +42,7 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
         return RxView.clicks(button_approve)
     }
 
-    override fun getScannedQrCode(): String {
-        return ""
-    }
+    override fun getUserProfile() = userProfileResponse
 
     override fun exitUserDetailScreen() {
         popBackCurrentFragment()
@@ -65,12 +65,14 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     private fun presetUserProfile() {
         val bundle: Bundle? = arguments
         bundle?.let {
-            val userProfileResponse = it.getSerializable(AppConstants.SerializableConstants.USER_PROFILE) as UserProfileResponse
-            userProfileResponse.photo?.let { it1 -> loadBase64Image(it1) }
-            userProfileResponse.memberName?.let { it1 -> text_view_user_name.setText(it1) }
-            userProfileResponse.memberAddress?.let { it1 -> text_view_user_address.setText(it1) }
-            userProfileResponse.memberCode?.let { it1 -> text_view_user_member_code.setText(it1) }
-            userProfileResponse.memberQrCode?.let { it1 -> text_view_user_member_qr_code.setText(it1) }
+            userProfileResponse = it.getSerializable(AppConstants.SerializableConstants.USER_PROFILE) as UserProfileResponse
+            userProfileResponse?.let {
+                it.photo?.let { it1 -> loadBase64Image(it1) }
+                it.memberName?.let { it1 -> text_view_user_name.setText(it1) }
+                it.memberAddress?.let { it1 -> text_view_user_address.setText(it1) }
+                it.memberCode?.let { it1 -> text_view_user_member_code.setText(it1) }
+                it.memberQrCode?.let { it1 -> text_view_user_member_qr_code.setText(it1) }
+            }
         }
     }
 
