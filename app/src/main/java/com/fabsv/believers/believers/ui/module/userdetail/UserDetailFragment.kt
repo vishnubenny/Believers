@@ -14,14 +14,14 @@ import com.fabsv.believers.believers.util.constants.AppConstants
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_user_detail.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import java.io.ByteArrayOutputStream
 
 class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDetailContract.UserDetailPresenter>(),
-        UserDetailContract.UserDetailView {
+        UserDetailContract.UserDetailView, AnkoLogger {
     override fun onPrepareFragment(view: View?) {
         resetScreen()
-
-        testBase64Image()
     }
 
     override fun createPresenter(): UserDetailPresenter {
@@ -66,22 +66,35 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
         val bundle: Bundle? = arguments
         bundle?.let {
             val userProfileResponse = it.getSerializable(AppConstants.SerializableConstants.USER_PROFILE) as UserProfileResponse
+            userProfileResponse.photo?.let { it1 -> loadBase64Image(it1) }
             userProfileResponse.memberName?.let { it1 -> text_view_user_name.setText(it1) }
             userProfileResponse.memberAddress?.let { it1 -> text_view_user_address.setText(it1) }
             userProfileResponse.memberCode?.let { it1 -> text_view_user_member_code.setText(it1) }
+            userProfileResponse.memberQrCode?.let { it1 -> text_view_user_member_qr_code.setText(it1) }
         }
     }
 
-    private fun testBase64Image() {
+    private fun loadDefaultBase64Image() {
         val baos = ByteArrayOutputStream()
-        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.thumb1)
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.image_not_available)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        var imageBytes = baos.toByteArray()
+        val imageBytes = baos.toByteArray()
         val imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT)
 
-        imageBytes = Base64.decode(imageString, Base64.DEFAULT)
-        val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        image_user_pic.setImageBitmap(decodedImage)
+        loadBase64Image(imageString)
+    }
+
+    private fun loadBase64Image(imageString: String?) {
+        imageString?.let {
+            try {
+                val imageBytes = Base64.decode(it, Base64.DEFAULT)
+                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                image_user_pic.setImageBitmap(decodedImage)
+            } catch (e: Exception) {
+                info(e)
+                loadDefaultBase64Image()
+            }
+        }
     }
 
     private fun presetScreen() {

@@ -46,7 +46,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     override fun resetScanCameraView() {
-        zXingScannerView!!.resumeCameraPreview(this)
+        zXingScannerView?.resumeCameraPreview(this)
         resetScanScreen()
     }
 

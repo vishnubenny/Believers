@@ -51,8 +51,8 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
 
     override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> {
         return apiInterface.getUserProfile(qrCode, mandalamId, meetingSlNo)
-                .map { t: Response<UserProfileResponse> ->
-                    t
+                .map { response: Response<UserProfileResponse> ->
+                    response
                 }
     }
 }

@@ -16,8 +16,8 @@ interface ApiInterface {
 //    @GET("5afbc6e43100008d007c5a7f")
 //    fun userLogin(@Query("MobileNumber") phoneNumber: String): Observable<Response<LoginResponse>>
 
-//        @GET("5afc3f1a3100006e007c5d99")
-    @GET("GetByQRCode")
+        @GET("5afc3f1a3100006e007c5d99")
+//    @GET("GetByQRCode")
     fun getUserProfile(@Query("QRCode") qrValue: String,
                        @Query("MandalamId") mandalamId: String?,
                        @Query("MeetingSlno") meetingSlNo: String?): Observable<Response<UserProfileResponse>>

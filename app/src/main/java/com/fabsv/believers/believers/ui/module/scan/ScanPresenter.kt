@@ -55,7 +55,6 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 .doOnNext { response: Response<UserProfileResponse>? ->
                     response?.let {
                         if (200 == response.code()) {
-                            getView()?.showShortToast("test " + response.body()?.memberName)
                             response.body()?.let { showUserDetailFragment(response.body() as UserProfileResponse) }
                         } else {
                             getView()?.showShortToast(context.getString(R.string.no_recodrs_found_for_the_qr_code))
@@ -67,14 +66,12 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     }
 
     override fun unSubscribeValidations() {
-        if (null != compositeDisposable && !compositeDisposable.isDisposed) {
-            compositeDisposable.clear()
-        }
+        clearCompositeDisposable()
     }
 
     private fun resetScanCameraView() {
         if (isViewAttached()) {
-            getView()!!.resetScanCameraView()
+            getView()?.resetScanCameraView()
         }
     }
 
@@ -92,9 +89,15 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     }
 
     private fun disposeCompositeDisposable() {
-        if (null != compositeDisposable && !compositeDisposable.isDisposed) {
+        if (!compositeDisposable.isDisposed) {
             compositeDisposable.clear()
             compositeDisposable.dispose()
+        }
+    }
+
+    private fun clearCompositeDisposable() {
+        if (!compositeDisposable.isDisposed) {
+            compositeDisposable.clear()
         }
     }
 
