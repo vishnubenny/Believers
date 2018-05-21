@@ -10,6 +10,7 @@ import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 
@@ -20,6 +21,18 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     private var scanInteractor: ScanInteractor
 
     override fun validate() {
+        scanFieldValueChangeObservableHandler()
+
+        scanAgainButtonObservableHandler()
+
+        submitButtonObservableHandler()
+    }
+
+    override fun unSubscribeValidations() {
+        clearCompositeDisposable()
+    }
+
+    private fun scanFieldValueChangeObservableHandler() {
         val scanValueObservable: Observable<Boolean> = getView()!!
                 .getScanFieldTextChanges()
                 .map { cardNumber: CharSequence -> cardNumber.length >= AppConstants.CardDataConstants.CARD_NUMBER_MINIMUM_LENGTH }
@@ -28,16 +41,9 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 }
         val scanValueDisposable = scanValueObservable.subscribe()
         this.compositeDisposable.add(scanValueDisposable)
+    }
 
-        val scanAgainButtonObservable: Observable<Boolean> = getView()!!
-                .getScanAgainButtonClickEvent()
-                .map { event: Any -> true }
-                .doOnNext { clicked: Boolean ->
-                    resetScanCameraView()
-                }
-        val scanAgainButtonDisposable = scanAgainButtonObservable.subscribe()
-        this.compositeDisposable.add(scanAgainButtonDisposable)
-
+    private fun submitButtonObservableHandler() {
         val submitButtonObservable: Observable<Response<UserProfileResponse>> = getView()!!
                 .getSubmitButtonClickEvent()
                 .map { t: Any -> true }
@@ -52,21 +58,33 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                     scanInteractor.requestQrCodeData(qrCode)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { response: Response<UserProfileResponse>? ->
-                    response?.let {
-                        if (200 == response.code()) {
-                            response.body()?.let { showUserDetailFragment(response.body() as UserProfileResponse) }
-                        } else {
-                            getView()?.showShortToast(context.getString(R.string.no_recodrs_found_for_the_qr_code))
-                        }
+        val submitButtonDisposable = submitButtonObservable.subscribe({ response: Response<UserProfileResponse>? ->
+            run {
+                response?.let {
+                    if (200 == response.code()) {
+                        response.body()?.let { showUserDetailFragment(it) }
+                    } else {
+                        getView()?.showShortToast(context.getString(R.string.no_recodrs_found_for_the_qr_code))
                     }
                 }
-        val submitButtonDisposable = submitButtonObservable.subscribe()
+            }
+        }, { throwable: Throwable ->
+            run {
+                getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+            }
+        })
         this.compositeDisposable.add(submitButtonDisposable)
     }
 
-    override fun unSubscribeValidations() {
-        clearCompositeDisposable()
+    private fun scanAgainButtonObservableHandler() {
+        val scanAgainButtonObservable: Observable<Boolean> = getView()!!
+                .getScanAgainButtonClickEvent()
+                .map { event: Any -> true }
+                .doOnNext { clicked: Boolean ->
+                    resetScanCameraView()
+                }
+        val scanAgainButtonDisposable = scanAgainButtonObservable.subscribe()
+        this.compositeDisposable.add(scanAgainButtonDisposable)
     }
 
     private fun resetScanCameraView() {

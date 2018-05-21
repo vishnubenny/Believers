@@ -4,13 +4,10 @@ import android.content.Context
 import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
-import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
-import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
-import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
+import com.fabsv.believers.believers.data.source.remote.model.*
 import com.fabsv.believers.believers.util.constants.AppConstants
 import com.fabsv.believers.believers.util.methods.RxUtils
 import io.reactivex.Observable
-import okhttp3.ResponseBody
 import retrofit2.Response
 
 class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPreferencesHelper) : UserDataSource {
@@ -30,9 +27,13 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
         return null
     }
 
-    override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>>
-            = Observable.just(Response.success(UserProfileResponse()))
+    override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> = Observable.just(Response.success(UserProfileResponse()))
 
     override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
             Observable.just(false)
+
+    override fun getCollectionReport(mandalamId: String, meetingSlNo: String, userId: String, mobile: String):
+            Observable<AppData<CollectionReportResponse>> {
+        return RxUtils.makeObservable(AppData())
+    }
 }

@@ -4,6 +4,8 @@ import android.content.Context
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.repository.UserRepository
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.data.source.remote.model.AppData
+import com.fabsv.believers.believers.data.source.remote.model.CollectionReportResponse
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
 import com.fabsv.believers.believers.ui.module.report.ReportFragment
 import com.fabsv.believers.believers.ui.module.scan.ScanFragment
@@ -16,6 +18,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
 
     private var compositeDisposable: CompositeDisposable
     private var userRepository: UserRepository
+    private var homeInteractor = HomeInteractor(context, appPreferencesHelper)
 
     init {
         this.compositeDisposable = CompositeDisposable()
@@ -41,6 +44,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 .doOnNext { clicked: Boolean ->
                     showScanScreen()
                 }
+
         val scanButtonDisposable = scanButtonObservable.subscribe()
         compositeDisposable.add(scanButtonDisposable)
 
@@ -48,8 +52,27 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 .getReportButtonClickEvent()
                 .map { event: Any -> true }
                 .doOnNext { clicked: Boolean ->
-                    showReportScreen()
+                    true
                 }
+                .switchMap { clicked: Boolean ->
+                    homeInteractor.getCollectionReport()
+                }
+                .map { collectionReportResponse: AppData<CollectionReportResponse> ->
+                    collectionReportResponse.isSuccessful()
+                }
+                .doOnNext { status: Boolean? ->
+                    when (status) {
+                        null -> getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                        else -> {
+                            if (status) {
+                                showReportScreen()
+                            } else {
+                                getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+                            }
+                        }
+                    }
+                }
+
         val reportButtonDisposable = reportButtonObservable.subscribe()
         this.compositeDisposable.add(reportButtonDisposable)
     }

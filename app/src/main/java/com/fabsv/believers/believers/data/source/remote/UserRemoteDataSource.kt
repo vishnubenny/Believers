@@ -6,10 +6,7 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.RxPhoneAuthProvider
 import com.fabsv.believers.believers.data.source.UserDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
-import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
-import com.fabsv.believers.believers.data.source.remote.model.LoginResponse
-import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
-import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
+import com.fabsv.believers.believers.data.source.remote.model.*
 import com.fabsv.believers.believers.data.source.remote.retrofit.ApiInterface
 import com.fabsv.believers.believers.data.source.remote.retrofit.ServiceGenerator
 import com.fabsv.believers.believers.util.methods.RxUtils
@@ -55,4 +52,17 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
     override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
             apiInterface.makeAttendancePresent(makeAttendancePresentModel)
                     .map { response: Response<Any> -> 200 == response.code() }
+
+    override fun getCollectionReport(mandalamId: String, meetingSlNo: String, userId: String, mobile: String):
+            Observable<AppData<CollectionReportResponse>> =
+            apiInterface.getCollectionReport(mandalamId, meetingSlNo, userId, mobile)
+                    .map { response: Response<CollectionReportResponse> ->
+                        val appData = AppData<CollectionReportResponse>()
+                        if (200 == response.code()) {
+                            response.body()?.let {
+                                appData.data = it
+                            }
+                        }
+                        return@map appData
+                    }
 }

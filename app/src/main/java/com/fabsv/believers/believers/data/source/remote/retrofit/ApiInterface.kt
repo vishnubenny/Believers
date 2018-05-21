@@ -1,5 +1,6 @@
 package com.fabsv.believers.believers.data.source.remote.retrofit
 
+import com.fabsv.believers.believers.data.source.remote.model.CollectionReportResponse
 import com.fabsv.believers.believers.data.source.remote.model.LoginResponse
 import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
@@ -20,6 +21,11 @@ interface ApiInterface {
                        @Query("MeetingSlno") meetingSlNo: String?): Observable<Response<UserProfileResponse>>
 
     @POST("MakePresent")
-    @FormUrlEncoded
     fun makeAttendancePresent(@Body makeAttendancePresentModel: MakeAttendancePresentModel?): Observable<Response<Any>>
+
+    @GET("CollectionSummary")
+    fun getCollectionReport(@Query("MandalamId") mandalamId: String,
+                            @Query("MeetingSlno") meetingSlNo: String,
+                            @Query("UserId") userId: String,
+                            @Query("MobileNo") mobile: String): Observable<Response<CollectionReportResponse>>
 }

@@ -6,9 +6,7 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.fabsv.believers.believers.data.source.local.UserLocalDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.UserRemoteDataSource
-import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
-import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
-import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
+import com.fabsv.believers.believers.data.source.remote.model.*
 import io.reactivex.Observable
 import retrofit2.Response
 
@@ -35,4 +33,16 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
 
     fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
             userRemoteDataSource.makeAttendancePresent(makeAttendancePresentModel)
+
+    fun getCollectionReport(): Observable<AppData<CollectionReportResponse>> {
+        val mandalamId = appPreferencesHelper.getUserData().mandalamId?.toString()
+        val meetingSlNo = appPreferencesHelper.getUserData().meetingSlNo?.toString()
+        val userId = appPreferencesHelper.getUserData().userId?.toString()
+        val mobileNo = appPreferencesHelper.getLoggedInUserPhoneNumber()
+
+        if (null != mandalamId && null != meetingSlNo && null != userId) {
+            return userRemoteDataSource.getCollectionReport(mandalamId, meetingSlNo, userId, mobileNo)
+        }
+        return Observable.just(AppData())
+    }
 }
