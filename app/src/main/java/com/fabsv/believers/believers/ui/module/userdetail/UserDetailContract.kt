@@ -9,13 +9,10 @@ interface UserDetailContract {
     interface UserDetailView : MvpView {
         fun getRejectButtonClickEvent(): Observable<Any>
         fun getApproveButtonClickEvent(): Observable<Any>
-
         fun getUserProfile(): UserProfileResponse?
-
         fun exitUserDetailScreen()
         fun onApproveStatusUpdateFailed()
         fun onApproveStatusUpdateSuccess()
-
     }
 
     interface UserDetailPresenter : MvpPresenter<UserDetailContract.UserDetailView> {

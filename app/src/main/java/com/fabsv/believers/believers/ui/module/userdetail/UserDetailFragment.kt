@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream
 
 class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDetailContract.UserDetailPresenter>(),
         UserDetailContract.UserDetailView, AnkoLogger {
-    private var userProfileResponse : UserProfileResponse? = null
+    private var userProfileResponse: UserProfileResponse? = null
 
     override fun onPrepareFragment(view: View?) {
         resetScreen()
@@ -49,6 +49,7 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     }
 
     override fun onApproveStatusUpdateSuccess() {
+        showShortToast(getString(R.string.attendance_updated_successfully))
         exitUserDetailScreen()
     }
 
