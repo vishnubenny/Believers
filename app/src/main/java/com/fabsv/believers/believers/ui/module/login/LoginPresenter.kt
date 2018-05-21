@@ -5,6 +5,7 @@ import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeAutoRetrievalTimeOutEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeSentEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthVerificationCompleteEvent
+import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
@@ -41,9 +42,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         val combinedDisposable = combinedObservable?.doOnNext { status: Boolean? -> status?.let { updateLoginButtonStatus(it) } }?.subscribe()
         combinedDisposable?.let { this.compositeDisposable.add(it) }
 
-        val loginOperationObservable: Observable<Boolean>? = getLoginOperationObservable()
-        val loginOperationDisposable = loginOperationObservable!!.subscribe()
-        this.compositeDisposable.add(loginOperationDisposable)
+        loginButtonObservableHandler()
 
         val retryButtonClickObservable: Observable<Boolean>? = getRetryButtonClickObservable()
         val retryButtonClickDisposable = retryButtonClickObservable!!.subscribe()
@@ -61,6 +60,23 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         val verifyOtpClickObservable: Observable<Boolean>? = getVerifyOtpClickObservable()
         val verifyOtpClickDisposable = verifyOtpClickObservable!!.subscribe()
         this.compositeDisposable.add(verifyOtpClickDisposable)
+    }
+
+    private fun loginButtonObservableHandler() {
+        val loginOperationObservable: Observable<Boolean>? = getLoginOperationObservable()
+        val loginOperationDisposable = loginOperationObservable?.subscribe(
+                { isSuccessful: Boolean ->
+                    if (isSuccessful) {
+                        getView()?.getLoginRequestModel()?.username?.let { appPreferencesHelper.setLoggedInUserUsername(it) }
+                        getView()?.getLoginRequestModel()?.mobileNumber?.let { updateUserPrefs(isSuccessful, it) }
+                    }
+                    updateLoginOperation(isSuccessful)
+                },
+                {
+                    getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                }
+        )
+        loginOperationDisposable?.let { this.compositeDisposable.add(it) }
     }
 
     override fun showHomeFragment() {
@@ -109,13 +125,6 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                     loginInteractor.loginWithPhoneNumber(loginRequest)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { isSuccessful: Boolean ->
-                    if (isSuccessful) {
-                        getView()?.getLoginRequestModel()?.username?.let { appPreferencesHelper.setLoggedInUserUsername(it) }
-                        getView()?.getLoginRequestModel()?.mobileNumber?.let { updateUserPrefs(isSuccessful, it) }
-                    }
-                    updateLoginOperation(isSuccessful)
-                }
         /*.filter { isSuccessful: Boolean ->
             isSuccessful
         }
