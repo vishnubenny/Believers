@@ -47,7 +47,7 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
                     if (status) {
                         approveStatusUpdateSuccess()
                     } else {
-                        apporveStatusUpdateFailed()
+                        approveStatusUpdateFailed()
                     }
                 }
     }
@@ -71,7 +71,7 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         }
     }
 
-    private fun apporveStatusUpdateFailed() {
+    private fun approveStatusUpdateFailed() {
         if (isViewAttached()) {
             getView()?.onApproveStatusUpdateFailed()
         }
