@@ -19,11 +19,6 @@ interface ApiInterface {
                        @Query("MandalamId") mandalamId: String?,
                        @Query("MeetingSlno") meetingSlNo: String?): Observable<Response<UserProfileResponse>>
 
-    @GET("attendance")
-    fun updateApproveStatusOfUser(@Query("phone") phoneNumber: String,
-                                  @Query("qrvalue") qrValue: String,
-                                  @Query("status") updateStatus: String): Observable<LoginResponse>
-
     @POST("MakePresent")
     @FormUrlEncoded
     fun makeAttendancePresent(@Body makeAttendancePresentModel: MakeAttendancePresentModel?): Observable<Response<Any>>
