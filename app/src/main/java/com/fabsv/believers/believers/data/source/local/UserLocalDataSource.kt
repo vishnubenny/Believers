@@ -34,6 +34,11 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
 
     override fun getCollectionReport(mandalamId: String, meetingSlNo: String, userId: String, mobile: String):
             Observable<AppData<CollectionReportResponse>> {
-        return RxUtils.makeObservable(AppData())
+        val appData = AppData<CollectionReportResponse>()
+        val collectionReportResponse = CollectionReportResponse()
+        collectionReportResponse.memberCount = 10
+        collectionReportResponse.regFeeAmount = 6000
+        appData.data = collectionReportResponse
+        return RxUtils.makeObservable(appData)
     }
 }

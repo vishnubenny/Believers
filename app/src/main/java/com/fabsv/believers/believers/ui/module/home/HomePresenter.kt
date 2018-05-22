@@ -11,7 +11,9 @@ import com.fabsv.believers.believers.ui.module.report.ReportFragment
 import com.fabsv.believers.believers.ui.module.scan.ScanFragment
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferencesHelper) :
         MvpBasePresenter<HomeContract.HomeView>(), HomeContract.HomePresenter {
@@ -48,33 +50,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         val scanButtonDisposable = scanButtonObservable.subscribe()
         compositeDisposable.add(scanButtonDisposable)
 
-        val reportButtonObservable: Observable<Boolean> = getView()!!
-                .getReportButtonClickEvent()
-                .map { event: Any -> true }
-                .doOnNext { clicked: Boolean ->
-                    true
-                }
-                .switchMap { clicked: Boolean ->
-                    homeInteractor.getCollectionReport()
-                }
-                .map { collectionReportResponse: AppData<CollectionReportResponse> ->
-                    collectionReportResponse.isSuccessful()
-                }
-                .doOnNext { status: Boolean? ->
-                    when (status) {
-                        null -> getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
-                        else -> {
-                            if (status) {
-                                showReportScreen()
-                            } else {
-                                getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
-                            }
-                        }
-                    }
-                }
-
-        val reportButtonDisposable = reportButtonObservable.subscribe()
-        this.compositeDisposable.add(reportButtonDisposable)
+        reportButtonObservableHandler()
     }
 
     override fun showLoggedInUserDetail() {
@@ -83,44 +59,65 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         }
     }
 
+    private fun reportButtonObservableHandler() {
+        val reportButtonObservable: Observable<AppData<CollectionReportResponse>> = getView()!!
+                .getReportButtonClickEvent()
+                .map { event: Any -> true }
+                .doOnNext { clicked: Boolean ->
+                    true
+                }
+                .observeOn(Schedulers.io())
+                .switchMap { clicked: Boolean ->
+                    homeInteractor.getCollectionReport()
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+
+        val reportButtonDisposable = reportButtonObservable.subscribe(
+                {
+                    if (it.isSuccessful()) {
+                        it.data?.let { it1 -> showCollectionReportScreen(it1) }
+                    } else {
+                        getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+                    }
+                },
+                {
+                    getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                }
+        )
+        this.compositeDisposable.add(reportButtonDisposable)
+    }
+
     private fun showLoggedInUserPhoneNumber(phoneNumber: String) {
         if (isViewAttached()) {
-            getView()!!.showLoggedInUserPhoneNumber(phoneNumber)
+            getView()?.showLoggedInUserPhoneNumber(phoneNumber)
         }
     }
 
     private fun updateLogoutStatus(logoutStatus: Boolean) {
         if (isViewAttached()) {
             if (logoutStatus) {
-                getView()!!.showFragment(LoginFragment.getInstance(), false)
+                getView()?.showFragment(LoginFragment.getInstance(), false)
             } else {
-                getView()!!.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
             }
         }
     }
 
     private fun showScanScreen() {
         if (isViewAttached()) {
-            getView()!!.showFragment(ScanFragment.getInstance(), true)
+            getView()?.showFragment(ScanFragment.getInstance(), true)
         }
     }
 
-    private fun showReportScreen() {
+    private fun showCollectionReportScreen(collectionReportResponse: CollectionReportResponse) {
         if (isViewAttached()) {
-            getView()!!.showFragment(ReportFragment.getInstance(), true)
+            getView()?.showFragment(ReportFragment.getInstance(collectionReportResponse), true)
         }
     }
 
     private fun clearCompositeDisposable() {
-        if (null != compositeDisposable && !compositeDisposable.isDisposed) {
+        if (!compositeDisposable.isDisposed) {
             compositeDisposable.clear()
-        }
-    }
-
-    private fun disposeCompositeDisposable() {
-        if (null != compositeDisposable && !compositeDisposable.isDisposed) {
-            compositeDisposable.clear()
-            compositeDisposable.dispose()
         }
     }
 

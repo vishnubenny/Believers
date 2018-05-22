@@ -30,7 +30,7 @@ class MakeAttendancePresentModel {
     var loginIp: String? = null
 
     companion object {
-        fun create(userProfileResponse: UserProfileResponse, appPreferencesHelper: AppPreferencesHelper):
+        fun create(userProfileResponse: UserProfileResponse, appPreferencesHelper: AppPreferencesHelper, ip: String):
                 MakeAttendancePresentModel {
             val makeAttendancePresentModel = MakeAttendancePresentModel()
             makeAttendancePresentModel.mandalamId = userProfileResponse.mandalamId
@@ -38,7 +38,7 @@ class MakeAttendancePresentModel {
             makeAttendancePresentModel.attSlNo = userProfileResponse.attSlNo
             makeAttendancePresentModel.memberSlNo = userProfileResponse.memberSlNo
             makeAttendancePresentModel.loginUser = appPreferencesHelper.getUserData().userId
-            makeAttendancePresentModel.loginIp = ""
+            makeAttendancePresentModel.loginIp = ip
             return makeAttendancePresentModel
         }
     }

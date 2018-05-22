@@ -38,6 +38,7 @@ class AppConstants {
     class SerializableConstants {
         companion object {
             const val USER_PROFILE : String = "USER_PROFILE"
+            const val COLLECTION_REPORT: String = "COLLECTION_REPORT"
         }
     }
 }

@@ -21,6 +21,7 @@ interface ApiInterface {
                        @Query("MeetingSlno") meetingSlNo: String?): Observable<Response<UserProfileResponse>>
 
     @POST("MakePresent")
+    @FormUrlEncoded
     fun makeAttendancePresent(@Body makeAttendancePresentModel: MakeAttendancePresentModel?): Observable<Response<Any>>
 
     @GET("CollectionSummary")

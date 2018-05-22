@@ -106,13 +106,6 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         }
     }
 
-    private fun disposeCompositeDisposable() {
-        if (!compositeDisposable.isDisposed) {
-            compositeDisposable.clear()
-            compositeDisposable.dispose()
-        }
-    }
-
     private fun clearCompositeDisposable() {
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.clear()
@@ -120,7 +113,7 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     }
 
     override fun detachView(retainInstance: Boolean) {
-        disposeCompositeDisposable()
+        clearCompositeDisposable()
         super.detachView(retainInstance)
     }
 

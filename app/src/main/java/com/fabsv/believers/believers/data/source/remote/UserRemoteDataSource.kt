@@ -51,18 +51,22 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
 
     override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
             apiInterface.makeAttendancePresent(makeAttendancePresentModel)
-                    .map { response: Response<Any> -> 200 == response.code() }
+                    .map { response: Response<Any> ->
+                        200 == response.code()
+                    }
 
     override fun getCollectionReport(mandalamId: String, meetingSlNo: String, userId: String, mobile: String):
-            Observable<AppData<CollectionReportResponse>> =
-            apiInterface.getCollectionReport(mandalamId, meetingSlNo, userId, mobile)
-                    .map { response: Response<CollectionReportResponse> ->
-                        val appData = AppData<CollectionReportResponse>()
-                        if (200 == response.code()) {
-                            response.body()?.let {
-                                appData.data = it
-                            }
+            Observable<AppData<CollectionReportResponse>> {
+        return apiInterface.getCollectionReport(mandalamId, meetingSlNo, userId, mobile)
+                .map { response: Response<CollectionReportResponse> ->
+                    val appData = AppData<CollectionReportResponse>()
+                    if (200 == response.code()) {
+                        response.body()?.let {
+                            appData.data = it
                         }
-                        return@map appData
                     }
+                    return@map appData
+                }
+    }
+
 }
