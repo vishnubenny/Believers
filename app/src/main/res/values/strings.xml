@@ -2,7 +2,7 @@
     <string name="app_name">Believers</string>
     <string name="something_went_wrong_please_contact_admin">Something went wrong. Please contact admin!</string>
     <string name="logout">Logout</string>
-    <string name="report">Report</string>
+    <string name="collection_report">Collection Report</string>
     <string name="scan">Scan</string>
     <string name="card_number">Card Number</string>
     <string name="submit">Submit</string>

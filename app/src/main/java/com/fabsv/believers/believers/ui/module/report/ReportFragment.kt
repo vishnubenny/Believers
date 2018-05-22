@@ -25,7 +25,7 @@ class ReportFragment : MvpFragment<ReportContract.ReportView, ReportContract.Rep
     }
 
     private fun resetScreen() {
-        updateToolbarTitle(activity?.getString(R.string.report), true)
+        updateToolbarTitle(activity?.getString(R.string.collection_report), true)
     }
 
     companion object {
