@@ -4,7 +4,6 @@ import android.content.Context
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.repository.UserRepository
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
-import com.fabsv.believers.believers.data.source.remote.model.AppData
 import com.fabsv.believers.believers.data.source.remote.model.CollectionReportResponse
 import com.fabsv.believers.believers.data.source.remote.model.QuorumReportResponse
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
@@ -15,9 +14,10 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.AnkoLogger
 
 class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferencesHelper) :
-        MvpBasePresenter<HomeContract.HomeView>(), HomeContract.HomePresenter {
+        MvpBasePresenter<HomeContract.HomeView>(), HomeContract.HomePresenter, AnkoLogger {
 
     private var compositeDisposable: CompositeDisposable
     private var userRepository: UserRepository
@@ -75,52 +75,65 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     }
 
     private fun collectionReportButtonObservableHandler() {
-        val collectionReportButtonObservable: Observable<AppData<CollectionReportResponse>> = getView()!!
-                .getCollectionReportButtonClickEvent()
-                .map { event: Any -> true }
-                .doOnNext { clicked: Boolean ->
-                    true
-                }
-                .observeOn(Schedulers.io())
-                .switchMap { clicked: Boolean ->
-                    homeInteractor.getCollectionReport()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-
-        val collectionReportButtonDisposable = collectionReportButtonObservable.subscribe(
-                {
-                    if (it.isSuccessful()) {
-                        it.data?.let { it1 -> showCollectionReportScreen(it1) }
-                    } else {
-                        getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+        getView()?.let {
+            compositeDisposable.add(it.getCollectionReportButtonClickEvent()
+                    .map {
+                        getView()?.showProgress()
                     }
-                },
-                {
-                    getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
-                }
-        )
-        this.compositeDisposable.add(collectionReportButtonDisposable)
+                    .doOnNext {
+                        compositeDisposable.add(homeInteractor.getCollectionReport()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        {
+                                            getView()?.hideProgress()
+                                            if (it.isSuccessful()) {
+                                                it.data?.let {
+                                                    showCollectionReportScreen(it)
+                                                }
+                                            } else {
+                                                getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+                                            }
+                                        },
+                                        {
+                                            getView()?.hideProgress()
+                                            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                                        }
+                                ))
+                    }
+                    .subscribe())
+        }
     }
 
     private fun quorumReportButtonObservableHandler() {
         getView()?.let {
-            val quorumReportButtonObservable: Observable<AppData<QuorumReportResponse>> = it
-                    .getQuorumReportButtonClickEvent()
-                    .map { event: Any -> true }
-                    .doOnNext { clicked: Boolean? -> true }
-                    .observeOn(Schedulers.io())
-                    .switchMap { clicked: Boolean -> homeInteractor.getQuorumReport() }
-                    .observeOn(AndroidSchedulers.mainThread())
-
-            val quorumReportButtonDisposable = quorumReportButtonObservable
-                    .subscribe(
-                            {
-
-                            }, {
-
+            compositeDisposable.add(it.getQuorumReportButtonClickEvent()
+                    .map {
+                        getView()?.showProgress()
                     }
-                    )
-            compositeDisposable.add(quorumReportButtonDisposable)
+                    .doOnNext {
+                        compositeDisposable.add(homeInteractor.getQuorumReport()
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        {
+                                            getView()?.hideProgress()
+                                            if (it.isSuccessful()) {
+                                                it.data?.let {
+                                                    showCollectionReportScreen(it)
+                                                }
+                                            } else {
+                                                getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+                                            }
+                                        },
+                                        {
+                                            getView()?.hideProgress()
+                                            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                                        }
+
+                                ))
+                    }
+                    .subscribe())
         }
     }
 
@@ -146,7 +159,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         }
     }
 
-    private fun showCollectionReportScreen(collectionReportResponse: CollectionReportResponse) {
+    private fun showCollectionReportScreen(collectionReportResponse: Any) {
         if (isViewAttached()) {
             getView()?.showFragment(ReportFragment.getInstance(collectionReportResponse), true)
         }

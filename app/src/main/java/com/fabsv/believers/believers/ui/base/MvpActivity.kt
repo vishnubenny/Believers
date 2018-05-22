@@ -2,6 +2,7 @@ package com.fabsv.believers.believers.ui.base
 
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment
 import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.ui.utils.ProgressDialog
 import com.fabsv.believers.believers.util.methods.utilityMethods
 import com.lv.note.personalnote.ui.base.BaseActivity
 import com.lv.note.personalnote.ui.base.MvpPresenter
@@ -22,6 +24,7 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
 
     protected var presenter: P? = null
     private lateinit var appPreferenceHelper: AppPreferencesHelper
+    private var progress: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +55,18 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
     }
 
     override fun showProgress() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (null == progress) {
+            progress = ProgressDialog.progressDialog(this)
+        }
+        progress?.show()
+    }
+
+    override fun hideProgress() {
+        progress?.let {
+            if (it.isShowing) {
+                it.hide()
+            }
+        }
     }
 
     override fun showShortToast(message: String) {

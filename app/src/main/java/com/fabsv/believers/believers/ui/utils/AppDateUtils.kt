@@ -1,4 +1,4 @@
-package com.fabsv.believers.believers.util
+package com.fabsv.believers.believers.ui.utils
 
 import com.fabsv.believers.believers.util.constants.AppConstants
 import java.text.SimpleDateFormat

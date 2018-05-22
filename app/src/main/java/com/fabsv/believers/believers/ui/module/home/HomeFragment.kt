@@ -6,9 +6,13 @@ import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.ui.base.MvpFragment
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresenter>(), HomeContract.HomeView {
+    private var collectionReportButtonClickEvent = PublishSubject.create<Boolean>()
+    private var quorumReportButtonClickEvent = PublishSubject.create<Boolean>()
+
     override fun onPrepareFragment(view: View?) {
 
         resetScreen()
@@ -37,12 +41,12 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
         return RxView.clicks(button_scan)
     }
 
-    override fun getCollectionReportButtonClickEvent(): Observable<Any> {
-        return RxView.clicks(button_collective_report)
+    override fun getCollectionReportButtonClickEvent(): Observable<Boolean> {
+        return collectionReportButtonClickEvent
     }
 
-    override fun getQuorumReportButtonClickEvent(): Observable<Any> {
-        return RxView.clicks(button_quorum_report)
+    override fun getQuorumReportButtonClickEvent(): Observable<Boolean> {
+        return quorumReportButtonClickEvent
     }
 
     override fun showLoggedInUserPhoneNumber(phoneNumber: String) {
@@ -51,6 +55,12 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
 
     private fun presetScreen() {
         updateToolbarTitle(activity?.resources?.getString(R.string.home), homeUpEnabled = false)
+        button_collective_report.setOnClickListener {
+            collectionReportButtonClickEvent.onNext(true)
+        }
+        button_quorum_report.setOnClickListener {
+            quorumReportButtonClickEvent.onNext(true)
+        }
     }
 
     companion object {

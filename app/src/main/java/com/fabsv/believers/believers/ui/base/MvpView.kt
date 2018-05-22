@@ -10,6 +10,8 @@ interface MvpView {
 
     fun showProgress()
 
+    fun hideProgress()
+
     fun showShortToast(message: String)
 
     fun showFragment(fragment: Fragment, isAddToBackStack: Boolean)

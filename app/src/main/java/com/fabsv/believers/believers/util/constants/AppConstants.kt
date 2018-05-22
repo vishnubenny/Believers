@@ -39,6 +39,7 @@ class AppConstants {
         companion object {
             const val USER_PROFILE : String = "USER_PROFILE"
             const val COLLECTION_REPORT: String = "COLLECTION_REPORT"
+            const val QUORUM_REPORT: String = "QUORUM_REPORT"
         }
     }
 

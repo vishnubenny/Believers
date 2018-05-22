@@ -77,7 +77,11 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
     abstract fun getLayoutResId(): Int
 
     override fun showProgress() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        (activity as MvpActivity<*, *>).showProgress()
+    }
+
+    override fun hideProgress() {
+        (activity as MvpActivity<*, *>).hideProgress()
     }
 
     override fun showFragment(fragment: Fragment, isAddToBackStack: Boolean) {

@@ -6,7 +6,7 @@ import com.fabsv.believers.believers.data.source.local.UserLocalDataSource
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.UserRemoteDataSource
 import com.fabsv.believers.believers.data.source.remote.model.*
-import com.fabsv.believers.believers.util.AppDateUtils
+import com.fabsv.believers.believers.ui.utils.AppDateUtils
 import com.fabsv.believers.believers.util.methods.RxUtils
 import io.reactivex.Observable
 import retrofit2.Response
