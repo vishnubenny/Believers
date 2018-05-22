@@ -23,9 +23,10 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
     }
 
     private fun resetScreen() {
-        presenter?.validate()
+        presenter?.unSubscribeValidations()
         presenter?.showLoggedInUserDetail()
         presetScreen()
+        presenter?.validate()
     }
 
     override fun getLogoutButtonClickEvent(): Observable<Any> {
@@ -36,8 +37,12 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
         return RxView.clicks(button_scan)
     }
 
-    override fun getReportButtonClickEvent(): Observable<Any> {
+    override fun getCollectionReportButtonClickEvent(): Observable<Any> {
         return RxView.clicks(button_collective_report)
+    }
+
+    override fun getQuorumReportButtonClickEvent(): Observable<Any> {
+        return RxView.clicks(button_quorum_report)
     }
 
     override fun showLoggedInUserPhoneNumber(phoneNumber: String) {

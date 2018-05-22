@@ -41,4 +41,8 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
         appData.data = collectionReportResponse
         return RxUtils.makeObservable(appData)
     }
+
+    override fun getQuorumReport(mandalamId: String, meetingSlNo: String, dateTimeObject: String): Observable<AppData<QuorumReportResponse>> {
+        return RxUtils.makeObservable(AppData())
+    }
 }

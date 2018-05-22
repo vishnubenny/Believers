@@ -49,6 +49,16 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        hideSoftKeyboard()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hideSoftKeyboard()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         presenter!!.detachView(retainInstance)

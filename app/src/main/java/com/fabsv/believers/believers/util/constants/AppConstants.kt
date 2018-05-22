@@ -41,4 +41,10 @@ class AppConstants {
             const val COLLECTION_REPORT: String = "COLLECTION_REPORT"
         }
     }
+
+    class DateConstants {
+        companion object {
+            const val DATE_TIME_OBJECT_FORMAT : String = "dd-MM-yy hh-mm-ss"
+        }
+    }
 }

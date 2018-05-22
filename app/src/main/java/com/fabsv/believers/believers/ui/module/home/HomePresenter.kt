@@ -6,6 +6,7 @@ import com.fabsv.believers.believers.data.repository.UserRepository
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.AppData
 import com.fabsv.believers.believers.data.source.remote.model.CollectionReportResponse
+import com.fabsv.believers.believers.data.source.remote.model.QuorumReportResponse
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
 import com.fabsv.believers.believers.ui.module.report.ReportFragment
 import com.fabsv.believers.believers.ui.module.scan.ScanFragment
@@ -28,6 +29,38 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     }
 
     override fun validate() {
+        logoutButtonObservableHandler()
+
+        scanButtonObservableHandler()
+
+        collectionReportButtonObservableHandler()
+
+        quorumReportButtonObservableHandler()
+    }
+
+    override fun showLoggedInUserDetail() {
+        if (appPreferencesHelper.getLoggedInUserPhoneNumber().isNotEmpty()) {
+            showLoggedInUserPhoneNumber(appPreferencesHelper.getLoggedInUserPhoneNumber())
+        }
+    }
+
+    override fun unSubscribeValidations() {
+        clearCompositeDisposable()
+    }
+
+    private fun scanButtonObservableHandler() {
+        val scanButtonObservable: Observable<Boolean> = getView()!!
+                .getScanButtonClickEvent()
+                .map { click: Any -> true }
+                .doOnNext { clicked: Boolean ->
+                    showScanScreen()
+                }
+
+        val scanButtonDisposable = scanButtonObservable.subscribe()
+        compositeDisposable.add(scanButtonDisposable)
+    }
+
+    private fun logoutButtonObservableHandler() {
         val logoutButtonObservable: Observable<Boolean> = getView()!!
                 .getLogoutButtonClickEvent()
                 .map { click: Any -> true }
@@ -39,29 +72,11 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 }
         val logoutButtonDisposable = logoutButtonObservable.subscribe()
         compositeDisposable.add(logoutButtonDisposable)
-
-        val scanButtonObservable: Observable<Boolean> = getView()!!
-                .getScanButtonClickEvent()
-                .map { click: Any -> true }
-                .doOnNext { clicked: Boolean ->
-                    showScanScreen()
-                }
-
-        val scanButtonDisposable = scanButtonObservable.subscribe()
-        compositeDisposable.add(scanButtonDisposable)
-
-        reportButtonObservableHandler()
     }
 
-    override fun showLoggedInUserDetail() {
-        if (appPreferencesHelper.getLoggedInUserPhoneNumber().isNotEmpty()) {
-            showLoggedInUserPhoneNumber(appPreferencesHelper.getLoggedInUserPhoneNumber())
-        }
-    }
-
-    private fun reportButtonObservableHandler() {
-        val reportButtonObservable: Observable<AppData<CollectionReportResponse>> = getView()!!
-                .getReportButtonClickEvent()
+    private fun collectionReportButtonObservableHandler() {
+        val collectionReportButtonObservable: Observable<AppData<CollectionReportResponse>> = getView()!!
+                .getCollectionReportButtonClickEvent()
                 .map { event: Any -> true }
                 .doOnNext { clicked: Boolean ->
                     true
@@ -72,7 +87,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                 }
                 .observeOn(AndroidSchedulers.mainThread())
 
-        val reportButtonDisposable = reportButtonObservable.subscribe(
+        val collectionReportButtonDisposable = collectionReportButtonObservable.subscribe(
                 {
                     if (it.isSuccessful()) {
                         it.data?.let { it1 -> showCollectionReportScreen(it1) }
@@ -84,7 +99,29 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                     getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
                 }
         )
-        this.compositeDisposable.add(reportButtonDisposable)
+        this.compositeDisposable.add(collectionReportButtonDisposable)
+    }
+
+    private fun quorumReportButtonObservableHandler() {
+        getView()?.let {
+            val quorumReportButtonObservable: Observable<AppData<QuorumReportResponse>> = it
+                    .getQuorumReportButtonClickEvent()
+                    .map { event: Any -> true }
+                    .doOnNext { clicked: Boolean? -> true }
+                    .observeOn(Schedulers.io())
+                    .switchMap { clicked: Boolean -> homeInteractor.getQuorumReport() }
+                    .observeOn(AndroidSchedulers.mainThread())
+
+            val quorumReportButtonDisposable = quorumReportButtonObservable
+                    .subscribe(
+                            {
+
+                            }, {
+
+                    }
+                    )
+            compositeDisposable.add(quorumReportButtonDisposable)
+        }
     }
 
     private fun showLoggedInUserPhoneNumber(phoneNumber: String) {
