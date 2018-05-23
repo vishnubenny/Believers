@@ -17,6 +17,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         LoginContract.LoginView {
     override fun onPrepareFragment(view: View?) {
 
+        presetScreen()
         resetScreen()
     }
 
@@ -121,7 +122,6 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         presenter!!.unSubscribeValidations()
         updateVerifyAuthCodeLayoutStatus(false)
         presetLoggedInUserLoginDetails()
-        presetScreen()
         presenter!!.validate()
     }
 
@@ -134,18 +134,18 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         loggedInUserUsername?.let {
             if (it.isNotEmpty()) {
                 edit_text_username.setText(it)
+
+                /*
+                If user already logged in successfully, then the username and password will preset in fields
+                In that case we have to request the focus in the password field
+                */
+                edit_text_password.requestFocus()
             }
         }
 
         val loggedInUserPhoneNumber: String = getAppPreferencesHelper().getLoggedInUserPhoneNumber()
         if (loggedInUserPhoneNumber.isNotEmpty())
             edit_text_phone_number.setText(loggedInUserPhoneNumber)
-
-        /*
-        If user already logged in successfully, then the username and password will preset in fields
-        In that case we have to request the focus in the password field
-         */
-        edit_text_password.requestFocus()
     }
 
     private fun setFieldsDefault() {

@@ -20,7 +20,6 @@ import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
-import org.jetbrains.anko.info
 
 class LoginPresenter(private val context: Context, private val appPreferencesHelper: AppPreferencesHelper) :
         MvpBasePresenter<LoginContract.LoginView>(), LoginContract.LoginPresenter, AnkoLogger {
@@ -73,7 +72,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                     updateLoginOperation(isSuccessful)
                 },
                 {
-                    getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                    onApiException()
                 }
         )
         loginOperationDisposable?.let { this.compositeDisposable.add(it) }
@@ -104,7 +103,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
 
     override fun resetScreen() {
         if (isViewAttached()) {
-            getView()!!.resetScreen()
+            getView()?.resetScreen()
         }
     }
 
@@ -118,6 +117,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                 .map { t: Any -> true }
                 .map { clicked: Boolean ->
                     getView()?.hideSoftKeyboard()
+                    getView()?.showProgress()
                     return@map getView()?.getLoginRequestModel()
                 }
                 .observeOn(Schedulers.io())
@@ -210,14 +210,22 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
             getView()?.getPhoneNumberField()?.map { it: CharSequence -> it.toString().length == 10 }
 
     private fun updateLoginOperation(isSuccessful: Boolean) {
-        info("updateLoginOperation " + isSuccessful)
         if (isViewAttached()) {
+            getView()?.hideProgress()
             if (isSuccessful) {
-                getView()!!.onLoginSuccess()
-                getView()!!.resetScreen()
+                getView()?.onLoginSuccess()
+                getView()?.resetScreen()
             } else {
-                getView()!!.onLoginFailure()
+                getView()?.onLoginFailure()
             }
+        }
+    }
+
+    private fun onApiException() {
+        if (isViewAttached()) {
+            getView()?.hideProgress()
+            getView()?.resetScreen()
+            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
         }
     }
 
