@@ -15,6 +15,7 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
 
     override fun onPrepareFragment(view: View?) {
 
+        presetScreen()
         resetScreen()
     }
 
@@ -26,10 +27,8 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
         return R.layout.fragment_home
     }
 
-    private fun resetScreen() {
+    override fun resetScreen() {
         presenter?.unSubscribeValidations()
-        presenter?.showLoggedInUserDetail()
-        presetScreen()
         presenter?.validate()
     }
 
@@ -54,6 +53,7 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
     }
 
     private fun presetScreen() {
+        presenter?.showLoggedInUserDetail()
         updateToolbarTitle(activity?.resources?.getString(R.string.home), homeUpEnabled = false)
         button_collective_report.setOnClickListener {
             collectionReportButtonClickEvent.onNext(true)

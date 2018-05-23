@@ -4,6 +4,7 @@ import android.content.Context
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.repository.UserRepository
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
+import com.fabsv.believers.believers.data.source.remote.model.AppData
 import com.fabsv.believers.believers.data.source.remote.model.CollectionReportResponse
 import com.fabsv.believers.believers.data.source.remote.model.QuorumReportResponse
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
@@ -92,12 +93,11 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                                                     showCollectionReportScreen(it)
                                                 }
                                             } else {
-                                                getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+                                                onApiRequestFailure()
                                             }
                                         },
                                         {
-                                            getView()?.hideProgress()
-                                            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                                            apiRequestException()
                                         }
                                 ))
                     }
@@ -123,18 +123,27 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                                                     showCollectionReportScreen(it)
                                                 }
                                             } else {
-                                                getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+                                                onApiRequestFailure()
                                             }
                                         },
                                         {
-                                            getView()?.hideProgress()
-                                            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                                            apiRequestException()
                                         }
-
                                 ))
                     }
                     .subscribe())
         }
+    }
+
+    private fun onApiRequestFailure() {
+        getView()?.showShortToast(context.getString(R.string.report_fetch_failed))
+        getView()?.resetScreen()
+    }
+
+    private fun apiRequestException() {
+        getView()?.hideProgress()
+        getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+        getView()?.resetScreen()
     }
 
     private fun showLoggedInUserPhoneNumber(phoneNumber: String) {

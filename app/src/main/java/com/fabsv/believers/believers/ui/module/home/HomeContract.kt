@@ -7,6 +7,7 @@ import io.reactivex.Observable
 interface HomeContract {
 
     interface HomeView : MvpView {
+        fun resetScreen()
         fun getLogoutButtonClickEvent(): Observable<Any>
         fun getScanButtonClickEvent(): Observable<Any>
         fun getCollectionReportButtonClickEvent(): Observable<Boolean>
