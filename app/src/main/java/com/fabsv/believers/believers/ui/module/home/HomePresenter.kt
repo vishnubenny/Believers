@@ -4,9 +4,6 @@ import android.content.Context
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.repository.UserRepository
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
-import com.fabsv.believers.believers.data.source.remote.model.AppData
-import com.fabsv.believers.believers.data.source.remote.model.CollectionReportResponse
-import com.fabsv.believers.believers.data.source.remote.model.QuorumReportResponse
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
 import com.fabsv.believers.believers.ui.module.report.ReportFragment
 import com.fabsv.believers.believers.ui.module.scan.ScanFragment
@@ -77,7 +74,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
 
     private fun collectionReportButtonObservableHandler() {
         getView()?.let {
-            compositeDisposable.add(it.getCollectionReportButtonClickEvent()
+            /*compositeDisposable.add(it.getCollectionReportButtonClickEvent()
                     .map {
                         getView()?.showProgress()
                     }
@@ -101,13 +98,38 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                                         }
                                 ))
                     }
-                    .subscribe())
+                    .subscribe())*/
+
+            compositeDisposable.add(it.getCollectionReportButtonClickEvent()
+                    .map {
+                        getView()?.showProgress()
+                    }
+                    .observeOn(Schedulers.io())
+                    .flatMap {
+                        homeInteractor.getCollectionReport()
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            {
+                                getView()?.hideProgress()
+                                if (it.isSuccessful()) {
+                                    it.data?.let {
+                                        showCollectionReportScreen(it)
+                                    }
+                                } else {
+                                    onApiRequestFailure()
+                                }
+                            },
+                            {
+                                apiRequestException()
+                            }
+                    ))
         }
     }
 
     private fun quorumReportButtonObservableHandler() {
         getView()?.let {
-            compositeDisposable.add(it.getQuorumReportButtonClickEvent()
+            /*compositeDisposable.add(it.getQuorumReportButtonClickEvent()
                     .map {
                         getView()?.showProgress()
                     }
@@ -131,7 +153,32 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                                         }
                                 ))
                     }
-                    .subscribe())
+                    .subscribe())*/
+
+            compositeDisposable.add(it.getQuorumReportButtonClickEvent()
+                    .map {
+                        getView()?.showProgress()
+                    }
+                    .observeOn(Schedulers.io())
+                    .flatMap {
+                        homeInteractor.getQuorumReport()
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            {
+                                getView()?.hideProgress()
+                                if (it.isSuccessful()) {
+                                    it.data?.let {
+                                        showCollectionReportScreen(it)
+                                    }
+                                } else {
+                                    onApiRequestFailure()
+                                }
+                            },
+                            {
+                                apiRequestException()
+                            }
+                    ))
         }
     }
 
