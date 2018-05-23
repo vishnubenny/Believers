@@ -14,9 +14,9 @@ class ApiClient {
         private var retrofit: Retrofit? = null
 
         var okHttpClient = OkHttpClient.Builder()
-                .connectTimeout(/*2, TimeUnit.MINUTES*/5, TimeUnit.SECONDS)
-                .readTimeout(/*2, TimeUnit.MINUTES*/5, TimeUnit.SECONDS)
-                .writeTimeout(/*2, TimeUnit.MINUTES*/5, TimeUnit.SECONDS)
+                .connectTimeout(2, TimeUnit.MINUTES /*5, TimeUnit.SECONDS*/)
+                .readTimeout(2, TimeUnit.MINUTES /*5, TimeUnit.SECONDS*/)
+                .writeTimeout(2, TimeUnit.MINUTES /*5, TimeUnit.SECONDS*/)
                 .build()
 
         fun getClient(): Retrofit? {

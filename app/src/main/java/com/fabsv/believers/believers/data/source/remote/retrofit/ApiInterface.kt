@@ -21,14 +21,14 @@ interface ApiInterface {
     @FormUrlEncoded
     fun makeAttendancePresent(@Body makeAttendancePresentModel: MakeAttendancePresentModel?): Observable<Response<Any>>
 
-//    @GET("5b0406a82f0000e017e7a83b")
+//    @GET("5b0540623200008100ebf7b1")
     @GET("CollectionSummary")
     fun getCollectionReport(@Query("MandalamId") mandalamId: String,
                             @Query("MeetingSlno") meetingSlNo: String,
                             @Query("UserId") userId: String,
                             @Query("MobileNo") mobile: String): Observable<Response<CollectionReportResponse>>
 
-    //    @GET("5b040f1f2f0000e017e7a869")
+//        @GET("5b040f1f2f0000e017e7a869")
     @GET("Quorum")
     fun getQuorumReport(@Query("MandalamId") mandalamId: String,
                         @Query("MeetingSlno") meetingSlNo: String,

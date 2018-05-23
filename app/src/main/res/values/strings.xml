@@ -28,4 +28,13 @@
     <string name="attendance_updated_successfully">Attendance updated successfully</string>
     <string name="report_fetch_failed">Report fetch failed</string>
     <string name="quorum_report">Quorum Report</string>
+    <string name="reg_fee_amount">Reg Fee Amount</string>
+    <string name="member_count">Member Count</string>
+    <string name="laymen_count">Laymen Count</string>
+    <string name="clergy_present_count">Clergy Present Count</string>
+    <string name="clergy_count">Clergy Count</string>
+    <string name="laymen_present_count">Laymen Present Count</string>
+    <string name="total_member_count">Total Member Count</string>
+    <string name="present_member_count">Present Member Count</string>
+    <string name="quorum_percentage">Quorum Percentage</string>
 </resources>
