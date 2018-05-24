@@ -82,6 +82,7 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     private fun onApiRequestException() {
         getView()?.hideProgress()
         getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+        getView()?.resetScanScreen()
     }
 
     private fun scanAgainButtonObservableHandler() {
@@ -105,7 +106,6 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         if (isViewAttached()) {
             getView()?.resetScanScreen()
             getView()?.showFragment(UserDetailFragment.getInstance(userProfileResponse), true)
-            getView()?.resetScanScreen()
         }
     }
 
