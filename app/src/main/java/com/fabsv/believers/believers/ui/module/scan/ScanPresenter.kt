@@ -47,10 +47,12 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         val submitButtonObservable: Observable<Response<UserProfileResponse>> = getView()!!
                 .getSubmitButtonClickEvent()
                 .map { t: Any -> true }
-                .doOnNext { t: Boolean? -> true }
+                .doOnNext { t: Boolean? ->
+                    true }
                 .filter { t: Boolean -> t }
                 .map { t: Boolean ->
                     getView()?.hideSoftKeyboard()
+                    getView()?.showProgress()
                     getView()?.getQrCodeFieldValue()
                 }
                 .observeOn(Schedulers.io())
@@ -61,6 +63,7 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         val submitButtonDisposable = submitButtonObservable.subscribe({ response: Response<UserProfileResponse>? ->
             run {
                 response?.let {
+                    getView()?.hideProgress()
                     if (200 == response.code()) {
                         response.body()?.let { showUserDetailFragment(it) }
                     } else {
@@ -70,10 +73,15 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
             }
         }, { throwable: Throwable ->
             run {
-                getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+                onApiRequestException()
             }
         })
         this.compositeDisposable.add(submitButtonDisposable)
+    }
+
+    private fun onApiRequestException() {
+        getView()?.hideProgress()
+        getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
     }
 
     private fun scanAgainButtonObservableHandler() {
@@ -97,6 +105,7 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         if (isViewAttached()) {
             getView()?.resetScanScreen()
             getView()?.showFragment(UserDetailFragment.getInstance(userProfileResponse), true)
+            getView()?.resetScanScreen()
         }
     }
 

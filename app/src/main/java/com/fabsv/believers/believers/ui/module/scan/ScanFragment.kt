@@ -22,6 +22,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     override fun onPrepareFragment(view: View?) {
         handleCameraPermission()
+        presetScreen()
         resetScanScreen()
     }
 
@@ -64,7 +65,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
      */
     override fun resetScanScreen() {
         presenter?.unSubscribeValidations()
-        presetScreen()
+        presetFields()
         presenter?.validate()
     }
 
@@ -113,8 +114,11 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     private fun presetScreen() {
-        edit_text_qr_code.text.clear()
         updateToolbarTitle(activity?.getString(R.string.scan_qr), homeUpEnabled = true)
+    }
+
+    private fun presetFields() {
+        edit_text_qr_code.text.clear()
     }
 
     fun onCameraPermissionGranted() {
