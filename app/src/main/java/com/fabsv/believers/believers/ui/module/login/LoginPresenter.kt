@@ -226,16 +226,15 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
-    private fun onApiException(it: Throwable) {
+    private fun onApiException(throwable: Throwable) {
         if (isViewAttached()) {
             getView()?.hideProgress()
             getView()?.resetScreen()
-            if (context.getString(R.string.not_connected_to_network).equals(it.message, ignoreCase = true)) {
+            if (context.getString(R.string.not_connected_to_network).equals(throwable.message, ignoreCase = true)) {
                 getView()?.showShortToast(context.getString(R.string.not_connected_to_network))
             } else {
                 getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
             }
-
         }
     }
 
