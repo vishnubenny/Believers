@@ -1,5 +1,6 @@
 package com.fabsv.believers.believers.ui.module.login
 
+import android.app.Activity
 import android.content.Context
 import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeAutoRetrievalTimeOutEvent
 import com.androidhuman.rxfirebase2.auth.PhoneAuthCodeSentEvent
@@ -10,6 +11,7 @@ import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelpe
 import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.ui.module.home.HomeFragment
 import com.fabsv.believers.believers.util.methods.RxUtils
+import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
@@ -72,7 +74,7 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
                     updateLoginOperation(isSuccessful)
                 },
                 {
-                    onApiException()
+                    onApiException(it)
                 }
         )
         loginOperationDisposable?.let { this.compositeDisposable.add(it) }
@@ -114,9 +116,12 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
     private fun getLoginOperationObservable(): Observable<Boolean>? {
         return getView()!!
                 .getLoginButtonClick()
-                .map { t: Any -> true }
-                .map { clicked: Boolean ->
+                .map { t: Any ->
                     getView()?.hideSoftKeyboard()
+                    true
+                }
+                .flatMap { clicked: Boolean -> UtilityMethods.isConnected(context as Activity) }
+                .map { isConnected: Boolean ->
                     getView()?.showProgress()
                     return@map getView()?.getLoginRequestModel()
                 }
@@ -221,11 +226,16 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         }
     }
 
-    private fun onApiException() {
+    private fun onApiException(it: Throwable) {
         if (isViewAttached()) {
             getView()?.hideProgress()
             getView()?.resetScreen()
-            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+            if (context.getString(R.string.not_connected_to_network).equals(it.message, ignoreCase = true)) {
+                getView()?.showShortToast(context.getString(R.string.not_connected_to_network))
+            } else {
+                getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+            }
+
         }
     }
 

@@ -37,4 +37,5 @@
     <string name="total_member_count">Total Member Count</string>
     <string name="present_member_count">Present Member Count</string>
     <string name="quorum_percentage">Quorum Percentage</string>
+    <string name="not_connected_to_network">Not connected to network</string>
 </resources>
