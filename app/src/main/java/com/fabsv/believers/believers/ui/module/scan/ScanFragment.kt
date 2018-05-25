@@ -65,6 +65,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
      */
     override fun resetScanScreen() {
         presenter?.unSubscribeValidations()
+        hideSoftKeyboard()
         presetFields()
         presenter?.validate()
     }
@@ -119,6 +120,8 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     private fun presetFields() {
         edit_text_qr_code.text.clear()
+        edit_text_qr_code.setText("")
+        edit_text_qr_code.requestFocus()
     }
 
     fun onCameraPermissionGranted() {
