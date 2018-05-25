@@ -1,16 +1,17 @@
 package com.fabsv.believers.believers.ui.module.scan
 
+import android.app.Activity
 import android.content.Context
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
 import com.fabsv.believers.believers.ui.module.userdetail.UserDetailFragment
 import com.fabsv.believers.believers.util.constants.AppConstants
+import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 
@@ -46,12 +47,16 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     private fun submitButtonObservableHandler() {
         val submitButtonObservable: Observable<Response<UserProfileResponse>> = getView()!!
                 .getSubmitButtonClickEvent()
-                .map { t: Any -> true }
-                .doOnNext { t: Boolean? ->
-                    true }
-                .filter { t: Boolean -> t }
-                .map { t: Boolean ->
+                .map { t: Any ->
+                    true
+                }
+                .doOnNext { clicked: Boolean? ->
                     getView()?.hideSoftKeyboard()
+                }
+                .flatMap { clicked: Boolean ->
+                    UtilityMethods.isConnected(context as Activity)
+                }
+                .map { t: Boolean ->
                     getView()?.showProgress()
                     getView()?.getQrCodeFieldValue()
                 }
@@ -73,16 +78,20 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
             }
         }, { throwable: Throwable ->
             run {
-                onApiRequestException()
+                onApiRequestException(throwable)
             }
         })
         this.compositeDisposable.add(submitButtonDisposable)
     }
 
-    private fun onApiRequestException() {
+    private fun onApiRequestException(throwable: Throwable) {
         getView()?.hideProgress()
-        getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
         getView()?.resetScanScreen()
+        if (context.getString(R.string.not_connected_to_network).equals(throwable.message, ignoreCase = true)) {
+            getView()?.showShortToast(context.getString(R.string.not_connected_to_network))
+        } else {
+            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+        }
     }
 
     private fun scanAgainButtonObservableHandler() {
