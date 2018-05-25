@@ -119,10 +119,10 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
      * Subscribing to the validations
      */
     override fun resetScreen() {
-        presenter!!.unSubscribeValidations()
+        presenter?.unSubscribeValidations()
         updateVerifyAuthCodeLayoutStatus(false)
         presetLoggedInUserLoginDetails()
-        presenter!!.validate()
+        presenter?.validate()
     }
 
     override fun onLoginFailure() {
