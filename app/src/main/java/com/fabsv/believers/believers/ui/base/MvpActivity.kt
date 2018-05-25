@@ -11,7 +11,7 @@ import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.ui.utils.ProgressDialog
-import com.fabsv.believers.believers.util.methods.utilityMethods
+import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.lv.note.personalnote.ui.base.BaseActivity
 import com.lv.note.personalnote.ui.base.MvpPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -83,7 +83,7 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
     }
 
     override fun hideSoftKeyboard() {
-        utilityMethods.hideKeyboard(this as Activity)
+        UtilityMethods.hideKeyboard(this as Activity)
     }
 
 

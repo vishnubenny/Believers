@@ -5,7 +5,7 @@ import android.view.View
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.remote.model.LoginRequest
 import com.fabsv.believers.believers.ui.base.MvpFragment
-import com.fabsv.believers.believers.util.methods.utilityMethods
+import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.jakewharton.rxbinding2.InitialValueObservable
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -52,7 +52,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     override fun updateVerifyOtpButtonStatus(isValidOtp: Boolean) {
         button_verify_otp.isEnabled = isValidOtp
         if (isValidOtp) {
-            utilityMethods.hideKeyboard(activity!!)
+            UtilityMethods.hideKeyboard(activity!!)
         }
     }
 
