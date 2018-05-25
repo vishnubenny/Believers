@@ -23,6 +23,7 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     private var userProfileResponse: UserProfileResponse? = null
 
     override fun onPrepareFragment(view: View?) {
+        presetScreen()
         resetScreen()
     }
 
@@ -54,12 +55,11 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     }
 
     override fun onApproveStatusUpdateFailed() {
-        showShortToast(getString(R.string.something_went_wrong_please_contact_admin))
+        showShortToast(getString(R.string.attendance_update_failed))
     }
 
-    private fun resetScreen() {
+    override fun resetScreen() {
         presenter?.unSubscribeValidations()
-        presetScreen()
         presenter?.validate()
     }
 
@@ -101,8 +101,8 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     }
 
     private fun presetScreen() {
-        presetUserProfile()
         updateToolbarTitle(activity?.getString(R.string.user_profile), homeUpEnabled = true)
+        presetUserProfile()
     }
 
     companion object {

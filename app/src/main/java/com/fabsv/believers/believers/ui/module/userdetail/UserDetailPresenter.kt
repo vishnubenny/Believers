@@ -1,12 +1,15 @@
 package com.fabsv.believers.believers.ui.module.userdetail
 
+import android.app.Activity
 import android.content.Context
 import android.content.Context.WIFI_SERVICE
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
+import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
+import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,13 +27,33 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
     }
 
     override fun validate() {
-        val rejectButtonObservable: Observable<Boolean>? = getRejectButtonObservable()
-        val rejectButtonDisposable = rejectButtonObservable!!.subscribe()
-        this.compositeDisposable.add(rejectButtonDisposable)
+        rejectButtonObservableHandler()
 
+        approveButtonObservableHandler()
+    }
+
+    private fun rejectButtonObservableHandler() {
+        val rejectButtonObservable: Observable<Boolean>? = getRejectButtonObservable()
+        val rejectButtonDisposable = rejectButtonObservable?.subscribe()
+        rejectButtonDisposable?.let { this.compositeDisposable.add(it) }
+    }
+
+    private fun approveButtonObservableHandler() {
         val approveButtonObservable: Observable<Boolean>? = getApproveButtonObservable()
-        val approveButtonDisposable = approveButtonObservable!!.subscribe()
-        this.compositeDisposable.add(approveButtonDisposable)
+        val approveButtonDisposable = approveButtonObservable?.subscribe(
+                {
+                    getView()?.hideProgress()
+                    if (it) {
+                        approveStatusUpdateSuccess()
+                    } else {
+                        approveStatusUpdateFailed()
+                    }
+                },
+                {
+                    onApiException(it)
+                }
+        )
+        approveButtonDisposable?.let { this.compositeDisposable.add(it) }
     }
 
     override fun unSubscribeValidations() {
@@ -40,8 +63,17 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
     private fun getApproveButtonObservable(): Observable<Boolean>? {
         return getView()!!
                 .getApproveButtonClickEvent()
-                .map { event: Any -> true }
-                .map { clicked: Boolean -> getView()?.getUserProfile() }
+                .map { event: Any ->
+                    getView()?.hideSoftKeyboard()
+                    true
+                }
+                .flatMap { clicked: Boolean ->
+                    UtilityMethods.isConnected(context as Activity)
+                }
+                .map { clicked: Boolean ->
+                    getView()?.showProgress()
+                    getView()?.getUserProfile()
+                }
                 .observeOn(Schedulers.io())
                 .switchMap { userProfileResponse: UserProfileResponse? ->
                     when (userProfileResponse) {
@@ -51,13 +83,13 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { status: Boolean ->
-                    if (status) {
-                        approveStatusUpdateSuccess()
-                    } else {
-                        approveStatusUpdateFailed()
-                    }
-                }
+        /*.doOnNext { status: Boolean ->
+            if (status) {
+                approveStatusUpdateSuccess()
+            } else {
+                approveStatusUpdateFailed()
+            }
+        }*/
     }
 
     private fun getIp(): String {
@@ -81,13 +113,25 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
 
     private fun approveStatusUpdateSuccess() {
         if (isViewAttached()) {
+            getView()?.resetScreen()
             getView()?.onApproveStatusUpdateSuccess()
         }
     }
 
     private fun approveStatusUpdateFailed() {
         if (isViewAttached()) {
+            getView()?.resetScreen()
             getView()?.onApproveStatusUpdateFailed()
+        }
+    }
+
+    private fun onApiException(throwable: Throwable) {
+        getView()?.hideProgress()
+        getView()?.resetScreen()
+        if (context.getString(R.string.not_connected_to_network).equals(throwable.message, ignoreCase = true)) {
+            getView()?.showShortToast(context.getString(R.string.not_connected_to_network))
+        } else {
+            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
         }
     }
 

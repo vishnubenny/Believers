@@ -13,6 +13,7 @@ interface UserDetailContract {
         fun exitUserDetailScreen()
         fun onApproveStatusUpdateFailed()
         fun onApproveStatusUpdateSuccess()
+        fun resetScreen()
     }
 
     interface UserDetailPresenter : MvpPresenter<UserDetailContract.UserDetailView> {
