@@ -10,6 +10,7 @@ import com.fabsv.believers.believers.util.constants.AppConstants
 class MainActivity : MvpActivity<MainContract.MainView, MainContract.MainPresenter>(),
         MainContract.MainView, AppAlertDialog.OnAlertButtonClick {
     override fun onPrepareActivity() {
+        handleCameraPermission()
 
         presenter?.showFragment();
     }
@@ -35,6 +36,12 @@ class MainActivity : MvpActivity<MainContract.MainView, MainContract.MainPresent
 
     override fun onNegativeButtonClick() {
         safeFinishActivity()
+    }
+
+    private fun handleCameraPermission() {
+        if (!hasPermission(Manifest.permission.CAMERA)) {
+            requestPermissionsSafely(arrayOf(Manifest.permission.CAMERA), AppConstants.PermissionConstants.REQUEST_ID_CAMERA)
+        }
     }
 
 
