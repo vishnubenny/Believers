@@ -39,8 +39,10 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     }
 
     override fun showLoggedInUserDetail() {
-        if (appPreferencesHelper.getLoggedInUserPhoneNumber().isNotEmpty()) {
-            showLoggedInUserPhoneNumber(appPreferencesHelper.getLoggedInUserPhoneNumber())
+        appPreferencesHelper.getLoggedInUserUsername()?.let {
+            if (it.isNotEmpty() && it.isNotBlank()) {
+                showLoggedInUsername(it)
+            }
         }
     }
 
@@ -211,9 +213,9 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         }
     }
 
-    private fun showLoggedInUserPhoneNumber(phoneNumber: String) {
+    private fun showLoggedInUsername(username: String) {
         if (isViewAttached()) {
-            getView()?.showLoggedInUserPhoneNumber(phoneNumber)
+            getView()?.showLoggedInUsername(username)
         }
     }
 

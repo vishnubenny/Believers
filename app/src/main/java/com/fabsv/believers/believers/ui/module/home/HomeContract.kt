@@ -12,7 +12,7 @@ interface HomeContract {
         fun getScanButtonClickEvent(): Observable<Any>
         fun getCollectionReportButtonClickEvent(): Observable<Boolean>
         fun getQuorumReportButtonClickEvent(): Observable<Boolean>
-        fun showLoggedInUserPhoneNumber(phoneNumber: String)
+        fun showLoggedInUsername(phoneNumber: String)
 
     }
 

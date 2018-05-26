@@ -48,8 +48,8 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
         return quorumReportButtonClickEvent
     }
 
-    override fun showLoggedInUserPhoneNumber(phoneNumber: String) {
-        text_view_logged_in_user_phone_number.text = phoneNumber
+    override fun showLoggedInUsername(phoneNumber: String) {
+        text_view_logged_in_username.text = phoneNumber
     }
 
     private fun presetScreen() {
