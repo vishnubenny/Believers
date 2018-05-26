@@ -11,7 +11,7 @@ class MainActivity : MvpActivity<MainContract.MainView, MainContract.MainPresent
         MainContract.MainView, AppAlertDialog.OnAlertButtonClick {
     override fun onPrepareActivity() {
 
-        presenter!!.showFragment();
+        presenter?.showFragment();
     }
 
     override fun createPresenter(): MainPresenter {
