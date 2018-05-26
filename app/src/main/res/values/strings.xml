@@ -39,4 +39,10 @@
     <string name="quorum_percentage">Quorum Percentage</string>
     <string name="not_connected_to_network">Not connected to network</string>
     <string name="attendance_update_failed">Attendance update failed</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="reg_no">Reg No</string>
+    <string name="parish">Parish</string>
+    <string name="reg_fee">Reg Fee</string>
+    <string name="diocese">Diocese</string>
 </resources>

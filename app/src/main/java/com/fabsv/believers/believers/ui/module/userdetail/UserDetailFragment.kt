@@ -68,11 +68,27 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
         bundle?.let {
             userProfileResponse = it.getSerializable(AppConstants.SerializableConstants.USER_PROFILE) as UserProfileResponse
             userProfileResponse?.let {
-                it.photo?.let { it1 -> loadBase64Image(it1) }
-                it.memberName?.let { it1 -> text_view_user_name.setText(it1) }
-                it.memberAddress?.let { it1 -> text_view_user_address.setText(it1) }
-                it.memberCode?.let { it1 -> text_view_user_member_code.setText(it1) }
-                it.memberQrCode?.let { it1 -> text_view_user_member_qr_code.setText(it1) }
+                it.photo?.let {
+                    loadBase64Image(it)
+                }
+                it.memberCode?.let {
+                    text_view_user_reg_no.setText(it)
+                }
+                it.memberName?.let {
+                    text_view_user_name.setText(it)
+                }
+                it.memberAddress?.let {
+                    text_view_user_address.setText(it)
+                }
+                it.memberParish?.let {
+                    text_view_user_parish.setText(it)
+                }
+                it.memberDiocese?.let {
+                    text_view_user_diocese.setText(it)
+                }
+                it.regFee?.let {
+                    text_view_user_reg_fee.setText(it)
+                }
             }
         }
     }
