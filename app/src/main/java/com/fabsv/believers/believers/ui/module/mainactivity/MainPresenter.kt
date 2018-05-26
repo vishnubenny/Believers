@@ -29,13 +29,13 @@ class MainPresenter(private val context: Context, private val appPreferencesHelp
 
     override fun onPermissionDenied() {
         if (isViewAttached()) {
-            getView()!!.showPermissionRequiredAlert()
+            getView()?.showPermissionRequiredAlert()
         }
     }
 
     fun showFragment(fragment: Fragment, isAddedToBackStack: Boolean) {
         if (isViewAttached()) {
-            getView()!!.showFragment(fragment, isAddedToBackStack)
+            getView()?.showFragment(fragment, isAddedToBackStack)
         }
     }
 
