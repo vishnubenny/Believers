@@ -59,7 +59,7 @@ class UserProfileResponse : Serializable {
 
     @SerializedName("RegFee")
     @Expose
-    var regFee: String? = null
+    var regFee: Int? = null
 }
 
 /*

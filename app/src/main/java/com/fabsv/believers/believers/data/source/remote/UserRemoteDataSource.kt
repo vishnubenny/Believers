@@ -12,6 +12,7 @@ import com.fabsv.believers.believers.data.source.remote.retrofit.ServiceGenerato
 import com.fabsv.believers.believers.util.methods.RxUtils
 import com.google.firebase.auth.PhoneAuthProvider
 import io.reactivex.Observable
+import okhttp3.RequestBody
 import org.jetbrains.anko.AnkoLogger
 import retrofit2.Response
 import java.util.concurrent.TimeUnit
@@ -49,9 +50,9 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
                 }
     }
 
-    override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
-            apiInterface.makeAttendancePresent(makeAttendancePresentModel)
-                    .map { response: Response<Any> ->
+    override fun makeAttendancePresent(requestBody: RequestBody) =
+            apiInterface.makeAttendancePresent(requestBody)
+                    .map { response: Response<Void> ->
                         200 == response.code()
                     }
 

@@ -8,6 +8,7 @@ import com.fabsv.believers.believers.data.source.remote.model.*
 import com.fabsv.believers.believers.util.constants.AppConstants
 import com.fabsv.believers.believers.util.methods.RxUtils
 import io.reactivex.Observable
+import okhttp3.RequestBody
 import retrofit2.Response
 
 class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPreferencesHelper) : UserDataSource {
@@ -29,7 +30,7 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
 
     override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> = Observable.just(Response.success(UserProfileResponse()))
 
-    override fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
+    override fun makeAttendancePresent(requestBody: RequestBody) =
             Observable.just(false)
 
     override fun getCollectionReport(mandalamId: String, meetingSlNo: String, userId: String, mobile: String):

@@ -34,7 +34,7 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
     }
 
     fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
-            userRemoteDataSource.makeAttendancePresent(makeAttendancePresentModel)
+            userRemoteDataSource.makeAttendancePresent(MakeAttendancePresentModel.createRequestBody(makeAttendancePresentModel))
 
     fun getCollectionReport(): Observable<AppData<CollectionReportResponse>> {
         val mandalamId = appPreferencesHelper.getUserData().mandalamId?.toString()

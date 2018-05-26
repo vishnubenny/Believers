@@ -15,8 +15,11 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
 
-class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPreferencesHelper) : MvpBasePresenter<UserDetailContract.UserDetailView>(), UserDetailContract.UserDetailPresenter {
+class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPreferencesHelper) :
+        MvpBasePresenter<UserDetailContract.UserDetailView>(), UserDetailContract.UserDetailPresenter, AnkoLogger {
 
     private var compositeDisposable: CompositeDisposable
     private var userDetailInteractor: UserDetailInteractor
@@ -126,6 +129,7 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
     }
 
     private fun onApiException(throwable: Throwable) {
+        error("test " + throwable)
         getView()?.hideProgress()
         getView()?.resetScreen()
         if (context.getString(R.string.not_connected_to_network).equals(throwable.message, ignoreCase = true)) {

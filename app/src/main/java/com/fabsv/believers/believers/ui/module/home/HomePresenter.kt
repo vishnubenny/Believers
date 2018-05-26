@@ -1,5 +1,6 @@
 package com.fabsv.believers.believers.ui.module.home
 
+import android.app.Activity
 import android.content.Context
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.repository.UserRepository
@@ -7,6 +8,7 @@ import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelpe
 import com.fabsv.believers.believers.ui.module.login.LoginFragment
 import com.fabsv.believers.believers.ui.module.report.ReportFragment
 import com.fabsv.believers.believers.ui.module.scan.ScanFragment
+import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.lv.note.personalnote.ui.base.MvpBasePresenter
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -102,6 +104,12 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
 
             compositeDisposable.add(it.getCollectionReportButtonClickEvent()
                     .map {
+                        getView()?.hideSoftKeyboard()
+                    }
+                    .flatMap {
+                        UtilityMethods.isConnected(context as Activity)
+                    }
+                    .map {
                         getView()?.showProgress()
                     }
                     .observeOn(Schedulers.io())
@@ -121,7 +129,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                                 }
                             },
                             {
-                                apiRequestException()
+                                apiRequestException(it)
                             }
                     ))
         }
@@ -157,6 +165,12 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
 
             compositeDisposable.add(it.getQuorumReportButtonClickEvent()
                     .map {
+                        getView()?.hideSoftKeyboard()
+                    }
+                    .flatMap {
+                        UtilityMethods.isConnected(context as Activity)
+                    }
+                    .map {
                         getView()?.showProgress()
                     }
                     .observeOn(Schedulers.io())
@@ -176,7 +190,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
                                 }
                             },
                             {
-                                apiRequestException()
+                                apiRequestException(it)
                             }
                     ))
         }
@@ -187,10 +201,14 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         getView()?.resetScreen()
     }
 
-    private fun apiRequestException() {
+    private fun apiRequestException(throwable: Throwable) {
         getView()?.hideProgress()
-        getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
         getView()?.resetScreen()
+        if (context.getString(R.string.not_connected_to_network).equals(throwable.message, ignoreCase = true)) {
+            getView()?.showShortToast(context.getString(R.string.not_connected_to_network))
+        } else {
+            getView()?.showShortToast(context.getString(R.string.something_went_wrong_please_contact_admin))
+        }
     }
 
     private fun showLoggedInUserPhoneNumber(phoneNumber: String) {
@@ -217,6 +235,7 @@ class HomePresenter(val context: Context, val appPreferencesHelper: AppPreferenc
 
     private fun showCollectionReportScreen(collectionReportResponse: Any) {
         if (isViewAttached()) {
+            getView()?.resetScreen()
             getView()?.showFragment(ReportFragment.getInstance(collectionReportResponse), true)
         }
     }
