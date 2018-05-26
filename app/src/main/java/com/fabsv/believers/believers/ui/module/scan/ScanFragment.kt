@@ -12,6 +12,7 @@ import com.jakewharton.rxbinding2.InitialValueObservable
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_scan.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
@@ -19,6 +20,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView
 class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresenter>(),
         ScanContract.ScanView, ZXingScannerView.ResultHandler {
     private var zXingScannerView: ZXingScannerView? = null
+    private val scanButtonClickPublishSubject = PublishSubject.create<Boolean>()
 
     override fun onPrepareFragment(view: View?) {
         handleCameraPermission()
@@ -38,8 +40,8 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         return RxView.clicks(button_scan_again)
     }
 
-    override fun getSubmitButtonClickEvent(): Observable<Any> {
-        return RxView.clicks(button_submit)
+    override fun getSubmitButtonClickEvent(): Observable<Boolean> {
+        return scanButtonClickPublishSubject
     }
 
     override fun getScanFieldTextChanges(): InitialValueObservable<CharSequence> {
@@ -102,9 +104,9 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     private fun startScannerCamera() {
-        if (null != zXingScannerView) {
-            zXingScannerView!!.setResultHandler(this)
-            zXingScannerView!!.startCamera()
+        zXingScannerView?.let {
+            it.setResultHandler(this)
+            it.startCamera()
         }
     }
 
@@ -116,6 +118,9 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     private fun presetScreen() {
         updateToolbarTitle(activity?.getString(R.string.scan_qr), homeUpEnabled = true)
+        button_submit.setOnClickListener {
+            scanButtonClickPublishSubject.onNext(true)
+        }
     }
 
     private fun presetFields() {

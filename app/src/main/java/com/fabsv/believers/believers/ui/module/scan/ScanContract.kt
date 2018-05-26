@@ -9,7 +9,7 @@ interface ScanContract {
 
     interface ScanView : MvpView {
         fun getScanAgainButtonClickEvent(): Observable<Any>
-        fun getSubmitButtonClickEvent(): Observable<Any>
+        fun getSubmitButtonClickEvent(): Observable<Boolean>
         fun getScanFieldTextChanges(): InitialValueObservable<CharSequence>
         fun resetScanCameraView()
         fun updateSubmitButtonState(isEnable: Boolean)

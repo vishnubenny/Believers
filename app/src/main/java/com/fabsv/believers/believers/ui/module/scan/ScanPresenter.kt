@@ -47,9 +47,6 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     private fun submitButtonObservableHandler() {
         val submitButtonObservable: Observable<Response<UserProfileResponse>> = getView()!!
                 .getSubmitButtonClickEvent()
-                .map { t: Any ->
-                    true
-                }
                 .doOnNext { clicked: Boolean? ->
                     getView()?.hideSoftKeyboard()
                 }
