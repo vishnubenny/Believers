@@ -3,6 +3,7 @@
     <!--padding dimens-->
     <dimen name="small_padding">8dp</dimen>
     <dimen name="padding">16dp</dimen>
+    <dimen name="large_padding">20dp</dimen>
 
     <!--text size dimens-->
     <dimen name="text_size_small">14sp</dimen>
