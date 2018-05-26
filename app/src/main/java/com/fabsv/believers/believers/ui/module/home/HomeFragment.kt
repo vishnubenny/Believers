@@ -54,7 +54,7 @@ class HomeFragment : MvpFragment<HomeContract.HomeView, HomeContract.HomePresent
 
     private fun presetScreen() {
         presenter?.showLoggedInUserDetail()
-        updateToolbarTitle(activity?.resources?.getString(R.string.home), homeUpEnabled = false)
+        updateToolbarTitle(activity?.resources?.getString(R.string.insmart), homeUpEnabled = false)
         button_collection_report.setOnClickListener {
             collectionReportButtonClickEvent.onNext(true)
         }

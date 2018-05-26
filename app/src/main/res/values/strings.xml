@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Believers</string>
+    <string name="app_name">InSMART</string>
     <string name="something_went_wrong_please_contact_admin">Something went wrong. Please contact admin!</string>
     <string name="logout">Logout</string>
     <string name="collection_report">Collection Report</string>
@@ -18,7 +18,7 @@
     <string name="waiting_for_otp_to_verify_your_phone_number">Waiting for otp to verify your phone number</string>
     <string name="otp_verification_attempt_failed_nplease_retry_or_try_changing_phone_number">OTP verification attempt failed. \nPlease retry or try changing phone number.</string>
     <string name="retry">Retry</string>
-    <string name="home">Home</string>
+    <string name="insmart">InSMART</string>
     <string name="enter_user_name">Enter username</string>
     <string name="enter_password">Enter password</string>
     <string name="no_recodrs_found_for_the_qr_code">No records found for the Qr code</string>
