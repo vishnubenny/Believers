@@ -87,7 +87,7 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
                     text_view_user_diocese.setText(it)
                 }
                 it.regFee?.let {
-                    text_view_user_reg_fee.setText(it)
+                    text_view_user_reg_fee.text = it.toString()
                 }
             }
         }
