@@ -11,6 +11,7 @@ import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.remote.model.UserProfileResponse
 import com.fabsv.believers.believers.ui.base.MvpFragment
 import com.fabsv.believers.believers.util.constants.AppConstants
+import com.fabsv.believers.believers.util.methods.RxUtils
 import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_user_detail.*
@@ -45,8 +46,21 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
 
     override fun getUserProfile() = userProfileResponse
 
+    override fun getUserProfileValidity(): Observable<Boolean> {
+        val usernameValidity = (null == userProfileResponse || null == userProfileResponse?.memberName)
+        var usernameEmptyValidity = false
+        userProfileResponse?.memberName?.let {
+            usernameEmptyValidity = it.isEmpty()
+        }
+        return RxUtils.makeObservable(usernameValidity || usernameEmptyValidity)
+    }
+
     override fun exitUserDetailScreen() {
         popBackCurrentFragment()
+    }
+
+    override fun updateApproveButtonEnableStatus(enable: Boolean) {
+        button_approve.isEnabled = enable
     }
 
     override fun onApproveStatusUpdateSuccess() {
@@ -71,11 +85,18 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
                 it.photo?.let {
                     loadBase64Image(it)
                 }
+                if (null == it.memberName) {
+                    hideUserDetailsPane()
+                }
                 it.memberCode?.let {
                     text_view_user_reg_no.setText(it)
                 }
                 it.memberName?.let {
-                    text_view_user_name.setText(it)
+                    if (it.isEmpty()) {
+                        hideUserDetailsPane()
+                    } else {
+                        text_view_user_name.setText(it)
+                    }
                 }
                 it.memberAddress?.let {
                     text_view_user_address.setText(it)
@@ -90,7 +111,16 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
                     text_view_user_reg_fee.text = it.toString()
                 }
             }
+
+            if (null == userProfileResponse) {
+                hideUserDetailsPane()
+            }
         }
+    }
+
+    private fun hideUserDetailsPane() {
+        text_view_no_user_existing.visibility = View.VISIBLE
+        scroll_view_user_detail_pane.visibility = View.GONE
     }
 
     private fun loadDefaultBase64Image() {

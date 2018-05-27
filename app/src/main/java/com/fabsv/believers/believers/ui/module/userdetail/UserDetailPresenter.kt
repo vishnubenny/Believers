@@ -32,6 +32,8 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
     override fun validate() {
         rejectButtonObservableHandler()
 
+        approveButtonEnableObservableHandler()
+
         approveButtonObservableHandler()
     }
 
@@ -39,6 +41,12 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         val rejectButtonObservable: Observable<Boolean>? = getRejectButtonObservable()
         val rejectButtonDisposable = rejectButtonObservable?.subscribe()
         rejectButtonDisposable?.let { this.compositeDisposable.add(it) }
+    }
+
+    private fun approveButtonEnableObservableHandler() {
+        val approveButtonEnableObservable: Observable<Boolean>? = getApproveButtonEnableObservable()
+        val approveButtonEnableDisposable = approveButtonEnableObservable?.subscribe()
+        approveButtonEnableDisposable?.let { this.compositeDisposable.add(it) }
     }
 
     private fun approveButtonObservableHandler() {
@@ -86,14 +94,14 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-        /*.doOnNext { status: Boolean ->
-            if (status) {
-                approveStatusUpdateSuccess()
-            } else {
-                approveStatusUpdateFailed()
-            }
-        }*/
     }
+
+    private fun getApproveButtonEnableObservable() = getView()?.getUserProfileValidity()
+            ?.map { isValid: Boolean -> !isValid }
+            ?.map { enable: Boolean ->
+                getView()?.updateApproveButtonEnableStatus(enable)
+                enable
+            }
 
     private fun getIp(): String {
         val wifiManager = context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager

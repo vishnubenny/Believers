@@ -10,9 +10,11 @@ interface UserDetailContract {
         fun getRejectButtonClickEvent(): Observable<Any>
         fun getApproveButtonClickEvent(): Observable<Any>
         fun getUserProfile(): UserProfileResponse?
+        fun getUserProfileValidity(): Observable<Boolean>
         fun exitUserDetailScreen()
         fun onApproveStatusUpdateFailed()
         fun onApproveStatusUpdateSuccess()
+        fun updateApproveButtonEnableStatus(enable: Boolean)
         fun resetScreen()
     }
 
