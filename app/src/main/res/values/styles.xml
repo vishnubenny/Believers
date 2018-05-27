@@ -53,4 +53,14 @@
         <item name="android:layout_marginTop">@dimen/large_padding</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
+
+    <style name="style_large_button_home_fragment">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:paddingStart">@dimen/padding</item>
+        <item name="android:paddingEnd">@dimen/padding</item>
+    </style>
 </resources>
