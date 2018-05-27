@@ -4,10 +4,14 @@
     <dimen name="small_padding">8dp</dimen>
     <dimen name="padding">16dp</dimen>
     <dimen name="large_padding">20dp</dimen>
+    <dimen name="extra_large_padding">32dp</dimen>
 
     <!--text size dimens-->
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_normal">16sp</dimen>
     <dimen name="text_size_large">18sp</dimen>
     <dimen name="text_size_extra_large">20sp</dimen>
+
+    <!--image dimens-->
+    <dimen name="dimen_login_image_view">70dp</dimen>
 </resources>
