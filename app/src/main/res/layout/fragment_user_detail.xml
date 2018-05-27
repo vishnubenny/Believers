@@ -36,6 +36,7 @@
         app:layout_constraintStart_toEndOf="@+id/button_reject" />
 
     <ScrollView
+        android:id="@+id/scroll_view_user_detail_pane"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -148,4 +149,22 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/text_view_no_user_existing"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/no_user_existing_in_our_database_with_the_given_qr_code"
+        android:textColor="@color/textPrimary"
+        android:textSize="@dimen/text_size_extra_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/button_approve"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

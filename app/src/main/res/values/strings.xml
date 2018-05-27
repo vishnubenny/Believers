@@ -45,4 +45,5 @@
     <string name="parish">Parish</string>
     <string name="reg_fee">Reg Fee</string>
     <string name="diocese">Diocese</string>
+    <string name="no_user_existing_in_our_database_with_the_given_qr_code">No user existing in our database with the given Qr Code</string>
 </resources>
