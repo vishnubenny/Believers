@@ -21,6 +21,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         ScanContract.ScanView, ZXingScannerView.ResultHandler {
     private var zXingScannerView: ZXingScannerView? = null
     private val scanButtonClickPublishSubject = PublishSubject.create<Boolean>()
+    private val isScanned = PublishSubject.create<Boolean>()
 
     override fun onPrepareFragment(view: View?) {
         handleCameraPermission()
@@ -49,7 +50,6 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     override fun resetScanCameraView() {
-        zXingScannerView?.resumeCameraPreview(this)
         resetScanScreen()
     }
 
@@ -60,6 +60,8 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     override fun getQrCodeFieldValue(): String {
         return edit_text_qr_code.text.toString()
     }
+
+    override fun getScannedOperationListener(): Observable<Boolean> = isScanned
 
     /**
      * Reset the scan screen : 1. UnSubscribe validations if any registered
@@ -84,14 +86,15 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     private fun initializeScannerView() {
         zXingScannerView = ZXingScannerView(activity)
-        zXingScannerView!!.setAutoFocus(true)
+        zXingScannerView?.setAutoFocus(true)
         frame_scanner.addView(zXingScannerView)
     }
 
     override fun handleResult(result: Result?) {
-        if (result!!.text.isNotEmpty()) {
-            edit_text_qr_code.setText(result.text)
+        result?.let {
+            edit_text_qr_code.setText(it.text)
             edit_text_qr_code.setSelection(edit_text_qr_code.length())
+            isScanned.onNext(true)
         }
     }
 
@@ -111,9 +114,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     private fun stopScannerCamera() {
-        if (null != zXingScannerView) {
-            zXingScannerView!!.stopCamera()
-        }
+        zXingScannerView?.stopCamera()
     }
 
     private fun presetScreen() {
@@ -127,6 +128,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         edit_text_qr_code.text.clear()
         edit_text_qr_code.setText("")
         edit_text_qr_code.requestFocus()
+        zXingScannerView?.resumeCameraPreview(this)
     }
 
     fun onCameraPermissionGranted() {

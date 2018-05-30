@@ -14,6 +14,7 @@ interface ScanContract {
         fun resetScanCameraView()
         fun updateSubmitButtonState(isEnable: Boolean)
         fun getQrCodeFieldValue(): String
+        fun getScannedOperationListener(): Observable<Boolean>
         fun resetScanScreen()
     }
 

@@ -27,6 +27,8 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         scanAgainButtonObservableHandler()
 
         submitButtonObservableHandler()
+
+        scannedOperationObservableHandler()
     }
 
     override fun unSubscribeValidations() {
@@ -47,21 +49,9 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
     private fun submitButtonObservableHandler() {
         val submitButtonObservable: Observable<Response<UserProfileResponse>> = getView()!!
                 .getSubmitButtonClickEvent()
-                .doOnNext { clicked: Boolean? ->
-                    getView()?.hideSoftKeyboard()
+                .switchMap {
+                    getRequestQrCodeObservable(it)
                 }
-                .flatMap { clicked: Boolean ->
-                    UtilityMethods.isConnected(context as Activity)
-                }
-                .map { t: Boolean ->
-                    getView()?.showProgress()
-                    getView()?.getQrCodeFieldValue()
-                }
-                .observeOn(Schedulers.io())
-                .switchMap { qrCode: String ->
-                    scanInteractor.requestQrCodeData(qrCode)
-                }
-                .observeOn(AndroidSchedulers.mainThread())
         val submitButtonDisposable = submitButtonObservable.subscribe({ response: Response<UserProfileResponse>? ->
             run {
                 response?.let {
@@ -79,6 +69,50 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
             }
         })
         this.compositeDisposable.add(submitButtonDisposable)
+    }
+
+    private fun getRequestQrCodeObservable(triggerEvent : Boolean) = Observable.just(triggerEvent)
+            .doOnNext { trigger: Boolean? ->
+                getView()?.hideSoftKeyboard()
+            }
+            .flatMap { clicked: Boolean ->
+                UtilityMethods.isConnected(context as Activity)
+            }
+            .map { t: Boolean ->
+                getView()?.showProgress()
+                getView()?.getQrCodeFieldValue()
+            }
+            .observeOn(Schedulers.io())
+            .switchMap { qrCode: String ->
+                scanInteractor.requestQrCodeData(qrCode)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .share()
+
+    private fun scannedOperationObservableHandler() {
+        getView()?.let {
+            val scannedOperationObservable : Observable<Response<UserProfileResponse>>? = it.getScannedOperationListener()
+                    .switchMap {
+                        getRequestQrCodeObservable(it)
+                    }
+            val scannedOperationDisposable = scannedOperationObservable?.subscribe({ response: Response<UserProfileResponse>? ->
+                run {
+                    response?.let {
+                        getView()?.hideProgress()
+                        if (200 == response.code()) {
+                            response.body()?.let { showUserDetailFragment(it) }
+                        } else {
+                            getView()?.showShortToast(context.getString(R.string.no_recodrs_found_for_the_qr_code))
+                        }
+                    }
+                }
+            }, { throwable: Throwable ->
+                run {
+                    onApiRequestException(throwable)
+                }
+            })
+            scannedOperationDisposable?.let { it1 -> this.compositeDisposable.add(it1) }
+        }
     }
 
     private fun onApiRequestException(throwable: Throwable) {
