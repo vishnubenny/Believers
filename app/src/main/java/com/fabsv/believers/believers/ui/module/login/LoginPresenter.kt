@@ -68,7 +68,6 @@ class LoginPresenter(private val context: Context, private val appPreferencesHel
         val loginOperationDisposable = loginOperationObservable?.subscribe(
                 { isSuccessful: Boolean ->
                     if (isSuccessful) {
-                        getView()?.getLoginRequestModel()?.username?.let { appPreferencesHelper.setLoggedInUserUsername(it) }
                         getView()?.getLoginRequestModel()?.mobileNumber?.let { updateUserPrefs(isSuccessful, it) }
                     }
                     updateLoginOperation(isSuccessful)
