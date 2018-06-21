@@ -2,6 +2,7 @@ package com.fabsv.believers.believers.ui.module.scan
 
 import android.Manifest
 import android.content.Context
+import android.media.MediaPlayer
 import android.support.v4.app.Fragment
 import android.view.View
 import com.fabsv.believers.believers.R
@@ -22,6 +23,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     private var zXingScannerView: ZXingScannerView? = null
     private val scanButtonClickPublishSubject = PublishSubject.create<Boolean>()
     private val isScanned = PublishSubject.create<Boolean>()
+    private lateinit var mp: MediaPlayer
 
     override fun onPrepareFragment(view: View?) {
         handleCameraPermission()
@@ -71,6 +73,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         presenter?.unSubscribeValidations()
         hideSoftKeyboard()
         presetFields()
+        presetAlert()
         presenter?.validate()
     }
 
@@ -94,6 +97,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         result?.let {
             edit_text_qr_code.setText(it.text)
             edit_text_qr_code.setSelection(edit_text_qr_code.length())
+            mp.start()
             isScanned.onNext(true)
         }
     }
@@ -129,6 +133,13 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         edit_text_qr_code.setText("")
         edit_text_qr_code.requestFocus()
         zXingScannerView?.resumeCameraPreview(this)
+    }
+
+    private fun presetAlert() {
+        mp = MediaPlayer.create(activity, R.raw.beep_01a)
+        mp.setOnCompletionListener {
+            it.release()
+        }
     }
 
     fun onCameraPermissionGranted() {
