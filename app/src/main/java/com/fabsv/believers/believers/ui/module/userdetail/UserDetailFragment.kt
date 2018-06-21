@@ -138,7 +138,8 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
             try {
                 val imageBytes = Base64.decode(it, Base64.DEFAULT)
                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                image_user_pic.setImageBitmap(decodedImage)
+                image_user_pic.setImageBitmap(Bitmap.createScaledBitmap(decodedImage, 150,
+                        150, false))
             } catch (e: Exception) {
                 info(e)
                 loadDefaultBase64Image()
