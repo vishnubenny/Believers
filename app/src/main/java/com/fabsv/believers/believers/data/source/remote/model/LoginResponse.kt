@@ -15,4 +15,8 @@ class LoginResponse {
     @SerializedName("MeetingSlno")
     @Expose
     var meetingSlNo: Int? = null
+
+    @SerializedName("UserName")
+    @Expose
+    var userName: String? = null
 }
