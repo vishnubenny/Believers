@@ -131,7 +131,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
 
     private fun presetLoggedInUserLoginDetails() {
         val loggedInUserUsername = getAppPreferencesHelper().getLoggedInUserUsername()
-        loggedInUserUsername?.let {
+        loggedInUserUsername.let {
             if (it.isNotEmpty()) {
                 edit_text_username.setText(it)
 
