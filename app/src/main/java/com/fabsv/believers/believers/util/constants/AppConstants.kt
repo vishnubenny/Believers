@@ -47,7 +47,7 @@ class AppConstants {
 
     class DateConstants {
         companion object {
-            const val DATE_TIME_OBJECT_FORMAT : String = "dd-MM-yy hh-mm-ss"
+            const val DATE_TIME_OBJECT_FORMAT : String = "dd/MM/yyyy hh:mm:ss a"
         }
     }
 }
