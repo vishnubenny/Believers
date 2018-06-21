@@ -21,6 +21,7 @@ interface ApiInterface {
 
 //            @GET("5b0ade4e2f00009800ec4c63")
 //            @GET("5afc3f1a3100006e007c5d99")
+//    @GET("5b0faa3b3000004a00115186")
     @GET("GetByQRCode")
     fun getUserProfile(@Query("QRCode") qrValue: String,
                        @Query("MandalamId") mandalamId: String?,
