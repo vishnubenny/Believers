@@ -72,7 +72,8 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
 
     override fun getQuorumReport(mandalamId: String, meetingSlNo: String, dateTimeObject: String):
             Observable<AppData<QuorumReportResponse>> {
-        return apiInterface.getQuorumReport(mandalamId, meetingSlNo, dateTimeObject)
+//        return apiInterface.getQuorumReport(mandalamId, meetingSlNo, dateTimeObject)
+        return apiInterface.getQuorumReport(mandalamId, meetingSlNo)
                 .map { response: Response<QuorumReportResponse> ->
                     val appData = AppData<QuorumReportResponse>()
                     if (200 == response.code()) {
