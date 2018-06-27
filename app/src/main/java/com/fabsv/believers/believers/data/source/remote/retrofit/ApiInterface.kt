@@ -21,7 +21,7 @@ interface ApiInterface {
 
     //            @GET("5b0ade4e2f00009800ec4c63")
 //            @GET("5afc3f1a3100006e007c5d99")
-//    @GET("5b0faa3b3000004a00115186")
+//    @GET("5b0faa3b3000004a00115186") // full data
     @GET("GetByQRCode")
     fun getUserProfile(@Query("QRCode") qrValue: String,
                        @Query("MandalamId") mandalamId: String?,
@@ -37,15 +37,14 @@ interface ApiInterface {
                             @Query("UserId") userId: String,
                             @Query("MobileNo") mobile: String): Observable<Response<CollectionReportResponse>>
 
+
+    /*Updated quorum report query as per the instruction on 26/06/2017.
+    No more "QuorumTime" field is needed in the get request*/
     //            @GET("5b040f1f2f0000e017e7a869")
     @GET("Quorum")
     fun getQuorumReport(@Query("MandalamId") mandalamId: String,
+                        @Query("MeetingSlno") meetingSlNo: String): Observable<Response<QuorumReportResponse>>
 //                        @Query("MeetingSlno") meetingSlNo: String,
 //                        @Query("QuorumTime") dateTimeObject: String): Observable<Response<QuorumReportResponse>>
-                        /*
-                        Updated quorum report query as per the instruction on 26/06/2017.
-                        No more "QuorumTime" field is needed in the get request
-                         */
-                        @Query("MeetingSlno") meetingSlNo: String): Observable<Response<QuorumReportResponse>>
 
 }
