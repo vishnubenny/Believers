@@ -64,12 +64,12 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     }
 
     override fun onApproveStatusUpdateSuccess() {
-        showShortToast(getString(R.string.attendance_updated_successfully))
+        showSuccessShortToast(getString(R.string.attendance_updated_successfully))
         exitUserDetailScreen()
     }
 
     override fun onApproveStatusUpdateFailed() {
-        showShortToast(getString(R.string.attendance_update_failed))
+        showFailedShortToast(getString(R.string.attendance_update_failed))
     }
 
     override fun resetScreen() {
