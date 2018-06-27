@@ -104,9 +104,13 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
             }
 
     private fun getIp(): String {
-        val wifiManager = context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager
+        /*val wifiManager = context.getApplicationContext().getSystemService(WIFI_SERVICE) as WifiManager
         val ip = Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
-        return ip
+        return ip*/
+        /*
+        Pass phone number instead of ip in the same key in api for approval. Update as of 26/06/2018
+         */
+        return appPreferencesHelper.getLoggedInUserPhoneNumber()
     }
 
     private fun getRejectButtonObservable(): Observable<Boolean>? {
