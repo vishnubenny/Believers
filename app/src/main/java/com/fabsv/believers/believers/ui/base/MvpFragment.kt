@@ -123,4 +123,12 @@ abstract class MvpFragment<V : MvpView, P : MvpPresenter<V>> : BaseFragment(), M
     override fun showShortToast(message: String) {
         activity!!.toast(message)
     }
+
+    override fun showFailedShortToast(message: String) {
+        (activity as MvpActivity<*, *>).showFailedShortToast(message)
+    }
+
+    override fun showSuccessShortToast(message: String) {
+        (activity as MvpActivity<*, *>).showSuccessShortToast(message)
+    }
 }

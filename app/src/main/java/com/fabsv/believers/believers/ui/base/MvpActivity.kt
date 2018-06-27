@@ -4,13 +4,16 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.app.Dialog
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.widget.Toast
 import com.fabsv.believers.believers.App
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.ui.utils.ProgressDialog
+import com.fabsv.believers.believers.ui.utils.setCustomToastProperties
 import com.fabsv.believers.believers.util.methods.UtilityMethods
 import com.lv.note.personalnote.ui.base.BaseActivity
 import com.lv.note.personalnote.ui.base.MvpPresenter
@@ -73,6 +76,14 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
         toast(message)
     }
 
+    override fun showFailedShortToast(message: String) {
+        showCustomToast(message, textColor = Color.RED, bgColor = Color.GRAY)
+    }
+
+    override fun showSuccessShortToast(message: String) {
+        showCustomToast(message, textColor = Color.GREEN, bgColor = Color.GRAY)
+    }
+
     override fun showFragment(fragment: Fragment, isAddToBackStack: Boolean) {
         if (isAddToBackStack) {
             supportFragmentManager.beginTransaction().replace(R.id.container, fragment)
@@ -128,6 +139,12 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
 
     fun getCurrentFragmentInstance(): Fragment {
         return supportFragmentManager.findFragmentById(R.id.container)
+    }
+
+    private fun showCustomToast(message: String, textColor: Int = Color.WHITE, bgColor: Int? = null) {
+        val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+        toast.setCustomToastProperties(textColor = textColor, bgColor = bgColor)
+        toast.apply { show() }
     }
 
     protected abstract fun createPresenter(): P?

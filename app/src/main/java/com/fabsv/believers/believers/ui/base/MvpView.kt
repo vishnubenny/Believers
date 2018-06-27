@@ -14,6 +14,10 @@ interface MvpView {
 
     fun showShortToast(message: String)
 
+    fun showFailedShortToast(message: String)
+
+    fun showSuccessShortToast(message: String)
+
     fun showFragment(fragment: Fragment, isAddToBackStack: Boolean)
 
     fun hideSoftKeyboard()
