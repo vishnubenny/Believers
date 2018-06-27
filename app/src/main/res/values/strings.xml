@@ -22,7 +22,7 @@
     <string name="enter_user_name">Enter username</string>
     <string name="enter_password">Enter password</string>
     <string name="no_recodrs_found_for_the_qr_code">No records found for the Qr code</string>
-    <string name="scan_qr">Scan Qr</string>
+    <string name="scan_qr">Scan QR</string>
     <string name="user_profile">User Profile</string>
     <string name="user_photo_field">user photo field</string>
     <string name="attendance_updated_successfully">Attendance updated successfully</string>
