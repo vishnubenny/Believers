@@ -13,6 +13,10 @@ class QuorumReportResponse : Serializable {
     @Expose
     var clergyPresentCount: Int? = null
 
+    @SerializedName("ClergyPerc")
+    @Expose
+    var clergyPerc: Float? = null
+
     @SerializedName("LaymenCount")
     @Expose
     var laymenCount: Int? = null
@@ -20,6 +24,10 @@ class QuorumReportResponse : Serializable {
     @SerializedName("LaymenPresentCount")
     @Expose
     var laymenPresentCount: Int? = null
+
+    @SerializedName("LaymenPerc")
+    @Expose
+    var laymenPerc: Float? = null
 
     @SerializedName("TotalMemberCount")
     @Expose
@@ -31,5 +39,5 @@ class QuorumReportResponse : Serializable {
 
     @SerializedName("QuorumPerc")
     @Expose
-    var quorumPerc: Int? = null
+    var quorumPerc: Float? = null
 }

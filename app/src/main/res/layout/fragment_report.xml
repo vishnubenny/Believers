@@ -105,11 +105,28 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_laymen_count"
+                android:id="@+id/layout_clergy_perc"
                 style="@style/style_layout_fragment_report"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_clergy_present_count">
+
+                <TextView
+                    style="@style/style_text_view_hint_report"
+                    android:text="@string/clergy_perc" />
+
+                <TextView
+                    style="@style/style_text_view_data_report"
+                    android:text="@{Float.toString(quorumReport.clergyPerc)}" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layout_laymen_count"
+                style="@style/style_layout_fragment_report"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_clergy_perc">
 
                 <TextView
                     style="@style/style_text_view_hint_report"
@@ -137,11 +154,27 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_laymen_total_member_count"
+                android:id="@+id/layout_laymen_perc"
                 style="@style/style_layout_fragment_report"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_laymen_present_count">
+
+                <TextView
+                    style="@style/style_text_view_hint_report"
+                    android:text="@string/laymen_perc" />
+
+                <TextView
+                    style="@style/style_text_view_data_report"
+                    android:text="@{Float.toString(quorumReport.laymenPerc)}" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_laymen_total_member_count"
+                style="@style/style_layout_fragment_report"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_laymen_perc">
 
                 <TextView
                     style="@style/style_text_view_hint_report"
@@ -181,7 +214,7 @@
 
                 <TextView
                     style="@style/style_text_view_data_report"
-                    android:text="@{Integer.toString(quorumReport.quorumPerc)}" />
+                    android:text="@{Float.toString(quorumReport.quorumPerc)}" />
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
     </android.support.constraint.ConstraintLayout>

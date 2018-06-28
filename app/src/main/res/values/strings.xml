@@ -25,7 +25,12 @@
     <string name="scan_qr">Scan QR</string>
     <string name="user_profile">User Profile</string>
     <string name="user_photo_field">user photo field</string>
+
+    <!--Attendance update alert constants-->
     <string name="attendance_updated_successfully">Attendance updated successfully</string>
+    <string name="attendance_update_failed">Attendance update failed</string>
+
+    <!--Report related constants-->
     <string name="report_fetch_failed">Report fetch failed</string>
     <string name="quorum_report">Quorum Report</string>
     <string name="reg_fee_amount">Reg Fee Amount</string>
@@ -37,13 +42,23 @@
     <string name="total_member_count">Total Member Count</string>
     <string name="present_member_count">Present Member Count</string>
     <string name="quorum_percentage">Quorum Percentage</string>
+    <string name="clergy_perc">Clergy Percentage</string>
+    <string name="laymen_perc">Laymen Percentage</string>
+
+    <!--Network not available alert-->
     <string name="not_connected_to_network">Not connected to network</string>
-    <string name="attendance_update_failed">Attendance update failed</string>
+
+    <!--User profile field values-->
     <string name="name">Name</string>
     <string name="address">Address</string>
     <string name="reg_no">Reg No</string>
     <string name="parish">Parish</string>
     <string name="reg_fee">Reg Fee</string>
     <string name="diocese">Diocese</string>
+
+    <!--Invalid qr scan alert-->
     <string name="no_user_existing_in_our_database_with_the_given_qr_code">No user existing in our database with the given Qr Code</string>
+
+    <!--Attendance already updated in server, again scanning the updated one-->
+    <string name="profile_already_marked_as_present">Profile already marked as Present</string>
 </resources>
