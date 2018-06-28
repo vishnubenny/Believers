@@ -49,10 +49,17 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     override fun getUserProfileValidity(): Observable<Boolean> {
         val usernameValidity = (null == userProfileResponse || null == userProfileResponse?.memberName)
         var usernameEmptyValidity = false
-        userProfileResponse?.memberName?.let {
-            usernameEmptyValidity = it.isEmpty()
+        var alreadyPresented = false
+        userProfileResponse?.let {
+            it.memberName?.let {
+                usernameEmptyValidity = it.isEmpty()
+            }
+            it.attType?.let {
+                alreadyPresented = it.equals("P", true)
+            }
         }
-        return RxUtils.makeObservable(usernameValidity || usernameEmptyValidity)
+        val usernameBasedValidity = usernameValidity || usernameEmptyValidity
+        return RxUtils.makeObservable(usernameBasedValidity || alreadyPresented)
     }
 
     override fun exitUserDetailScreen() {
@@ -109,6 +116,13 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
                 }
                 it.regFee?.let {
                     text_view_user_reg_fee.text = it.toString()
+                }
+                it.attType?.let {
+                    if (it.equals("P", true)) {
+                        text_view_profile_present_info.visibility = View.VISIBLE
+                    } else {
+                        text_view_profile_present_info.visibility = View.GONE
+                    }
                 }
             }
 

@@ -61,6 +61,19 @@
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/user_photo_field" />
 
+            <TextView
+                android:id="@+id/text_view_profile_present_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_padding"
+                android:background="@color/light_grey"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="@dimen/small_padding"
+                android:text="@string/profile_already_marked_as_present"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="@dimen/text_size_normal" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

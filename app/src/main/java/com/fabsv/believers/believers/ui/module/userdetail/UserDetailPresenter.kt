@@ -2,9 +2,6 @@ package com.fabsv.believers.believers.ui.module.userdetail
 
 import android.app.Activity
 import android.content.Context
-import android.content.Context.WIFI_SERVICE
-import android.net.wifi.WifiManager
-import android.text.format.Formatter
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.data.source.local.prefs.AppPreferencesHelper
 import com.fabsv.believers.believers.data.source.remote.model.MakeAttendancePresentModel
