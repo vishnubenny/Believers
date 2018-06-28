@@ -19,9 +19,9 @@ interface ApiInterface {
                   @Query("Password") password: String,
                   @Query("MobileNumber") mobile: String): Observable<Response<LoginResponse>>
 
-    //            @GET("5b0ade4e2f00009800ec4c63")
-//            @GET("5afc3f1a3100006e007c5d99")
-//    @GET("5b0faa3b3000004a00115186") // full data
+//    @GET("5b0ade4e2f00009800ec4c63") // empty data
+//    @GET("5b0faa3b3000004a00115186") // full data: attType: Not Present
+//    @GET("5b33a3a1320000771bd1e1ef") //attType: Present response
     @GET("GetByQRCode")
     fun getUserProfile(@Query("QRCode") qrValue: String,
                        @Query("MandalamId") mandalamId: String?,
@@ -30,7 +30,7 @@ interface ApiInterface {
     @POST("MakePresent")
     fun makeAttendancePresent(@Body requestBody: RequestBody): Observable<Response<Void>>
 
-    //        @GET("5b0540623200008100ebf7b1")
+//        @GET("5b0540623200008100ebf7b1")
     @GET("CollectionSummary")
     fun getCollectionReport(@Query("MandalamId") mandalamId: String,
                             @Query("MeetingSlno") meetingSlNo: String,
@@ -40,7 +40,7 @@ interface ApiInterface {
 
     /*Updated quorum report query as per the instruction on 26/06/2017.
     No more "QuorumTime" field is needed in the get request*/
-    //            @GET("5b040f1f2f0000e017e7a869")
+//    @GET("5b34c41a2f00004e0037607e") // full data
     @GET("Quorum")
     fun getQuorumReport(@Query("MandalamId") mandalamId: String,
                         @Query("MeetingSlno") meetingSlNo: String): Observable<Response<QuorumReportResponse>>
