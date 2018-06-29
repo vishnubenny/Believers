@@ -13,7 +13,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiInterface {
-    //    @GET("5b2b77e73000007e0023464b")
+//    @GET("5b2b77e73000007e0023464b")    //login mock
     @GET("ValidateLogin")
     fun userLogin(@Query("UserName") username: String,
                   @Query("Password") password: String,
