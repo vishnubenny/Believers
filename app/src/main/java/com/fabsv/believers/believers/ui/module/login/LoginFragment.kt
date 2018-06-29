@@ -73,7 +73,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
             //make visible layout login
             layout_login.visibility = View.VISIBLE
             //phone number edit text set default
-            setFieldsDefault()
+//            setFieldsDefault()    //change regarding reset - now calling in onCreate() method
         }
     }
 
@@ -121,7 +121,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
     override fun resetScreen() {
         presenter?.unSubscribeValidations()
         updateVerifyAuthCodeLayoutStatus(false)
-        presetLoggedInUserLoginDetails()
+//        presetLoggedInUserLoginDetails()  // presetting fields is not wanted as of comment on 28/06/29, so commenting the preset method
         presenter?.validate()
     }
 
@@ -144,8 +144,9 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
         }
 
         val loggedInUserPhoneNumber: String = getAppPreferencesHelper().getLoggedInUserPhoneNumber()
-        if (loggedInUserPhoneNumber.isNotEmpty())
+        if (loggedInUserPhoneNumber.isNotEmpty()) {
             edit_text_phone_number.setText(loggedInUserPhoneNumber)
+        }
     }
 
     private fun setFieldsDefault() {
@@ -157,6 +158,7 @@ class LoginFragment : MvpFragment<LoginContract.LoginView, LoginContract.LoginPr
 
     private fun presetScreen() {
         updateToolbarTitle(activity?.resources?.getString(R.string.login), false)
+        setFieldsDefault()
     }
 
     private fun getUsername() = edit_text_username.text.toString()
