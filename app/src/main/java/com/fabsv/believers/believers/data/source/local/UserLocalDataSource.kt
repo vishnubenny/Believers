@@ -28,7 +28,11 @@ class UserLocalDataSource(val context: Context, val appPreferencesHelper: AppPre
         return null
     }
 
-    override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> = Observable.just(Response.success(UserProfileResponse()))
+    override fun requestQrCodeData(qrCode: String, mandalamId: String, meetingSlNo: String):
+            Observable<Response<UserProfileResponse>> = Observable.just(Response.success(UserProfileResponse()))
+
+    override fun requestQrCodeDataFromSearch(qrCode: String, mandalamId: String, meetingSlNo: String):
+            Observable<Response<UserProfileResponse>> = Observable.just(Response.success(UserProfileResponse()))
 
     override fun makeAttendancePresent(requestBody: RequestBody) =
             Observable.just(false)

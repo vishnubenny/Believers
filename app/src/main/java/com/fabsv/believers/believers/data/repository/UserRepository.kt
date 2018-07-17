@@ -33,6 +33,11 @@ class UserRepository(private val context: Context, val appPreferencesHelper: App
         return userRemoteDataSource.requestQrCodeData(qrCode, appPreferencesHelper.getUserData().mandalamId.toString(), appPreferencesHelper.getUserData().meetingSlNo.toString())
     }
 
+    fun requestQrCodeDataFromSearch(qrCode: String): Observable<Response<UserProfileResponse>>? =
+            userRemoteDataSource.requestQrCodeDataFromSearch(qrCode,
+                    appPreferencesHelper.getUserData().mandalamId.toString(),
+                    appPreferencesHelper.getUserData().meetingSlNo.toString())
+
     fun makeAttendancePresent(makeAttendancePresentModel: MakeAttendancePresentModel) =
             userRemoteDataSource.makeAttendancePresent(MakeAttendancePresentModel.createRequestBody(makeAttendancePresentModel))
 

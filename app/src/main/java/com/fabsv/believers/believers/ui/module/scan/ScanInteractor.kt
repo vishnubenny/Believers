@@ -13,4 +13,7 @@ class ScanInteractor(val context: Context, val appPreferencesHelper: AppPreferen
     fun requestQrCodeData(qrCode: String): Observable<Response<UserProfileResponse>>? {
         return userRepository.requestQrCodeData(qrCode)
     }
+
+    fun requestQrCodeDataFromSearch(qrCode: String): Observable<Response<UserProfileResponse>>? =
+            userRepository.requestQrCodeDataFromSearch(qrCode)
 }

@@ -50,6 +50,13 @@ class UserRemoteDataSource(val context: Context, val appPreferencesHelper: AppPr
                 }
     }
 
+    override fun requestQrCodeDataFromSearch(qrCode: String, mandalamId: String, meetingSlNo: String): Observable<Response<UserProfileResponse>> {
+        return apiInterface.getUserProfileFromSearch(qrCode, mandalamId, meetingSlNo)
+                .map { response: Response<UserProfileResponse> ->
+                    response
+                }
+    }
+
     override fun makeAttendancePresent(requestBody: RequestBody) =
             apiInterface.makeAttendancePresent(requestBody)
                     .map { response: Response<Void> ->

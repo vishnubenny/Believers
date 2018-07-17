@@ -50,7 +50,7 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
         val submitButtonObservable: Observable<Response<UserProfileResponse>> = getView()!!
                 .getSubmitButtonClickEvent()
                 .switchMap {
-                    getRequestQrCodeObservable(it)
+                    getRequestQrCodeFromSearchObservable(it)
                 }
         val submitButtonDisposable = submitButtonObservable.subscribe({ response: Response<UserProfileResponse>? ->
             run {
@@ -85,6 +85,24 @@ class ScanPresenter(val context: Context, val appPreferencesHelper: AppPreferenc
             .observeOn(Schedulers.io())
             .switchMap { qrCode: String ->
                 scanInteractor.requestQrCodeData(qrCode)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .share()
+
+    private fun getRequestQrCodeFromSearchObservable(triggerEvent : Boolean) = Observable.just(triggerEvent)
+            .doOnNext { trigger: Boolean? ->
+                getView()?.hideSoftKeyboard()
+            }
+            .flatMap { clicked: Boolean ->
+                UtilityMethods.isConnected(context as Activity)
+            }
+            .map { t: Boolean ->
+                getView()?.showProgress()
+                getView()?.getQrCodeFieldValue()
+            }
+            .observeOn(Schedulers.io())
+            .switchMap { qrCode: String ->
+                scanInteractor.requestQrCodeDataFromSearch(qrCode)
             }
             .observeOn(AndroidSchedulers.mainThread())
             .share()
