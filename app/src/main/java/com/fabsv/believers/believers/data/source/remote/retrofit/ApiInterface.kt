@@ -27,6 +27,13 @@ interface ApiInterface {
                        @Query("MandalamId") mandalamId: String?,
                        @Query("MeetingSlno") meetingSlNo: String?): Observable<Response<UserProfileResponse>>
 
+//    @GET("5b0faa3b3000004a00115186") // full data: attType: Not Present
+    @GET("GetByMemberCode")
+    fun getUserProfileFromSearch(@Query("QRCode") qrValue: String,
+                                 @Query("MandalamId") mandalamId: String,
+                                 @Query("MeetingSlno") meetingSlNo: String):
+            Observable<Response<UserProfileResponse>>
+
     @POST("MakePresent")
     fun makeAttendancePresent(@Body requestBody: RequestBody): Observable<Response<Void>>
 
