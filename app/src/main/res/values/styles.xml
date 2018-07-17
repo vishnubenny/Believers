@@ -39,6 +39,7 @@
     </style>
 
     <style name="style_text_view_hint_report">
+        <item name="android:paddingLeft">@dimen/small_padding</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/textPrimary</item>
@@ -50,7 +51,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:layout_marginTop">@dimen/large_padding</item>
+        <item name="android:paddingTop">@dimen/small_padding</item>
+        <item name="android:paddingBottom">@dimen/small_padding</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
 
