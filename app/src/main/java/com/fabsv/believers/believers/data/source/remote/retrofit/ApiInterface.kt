@@ -29,7 +29,7 @@ interface ApiInterface {
 
 //    @GET("5b0faa3b3000004a00115186") // full data: attType: Not Present
     @GET("GetByMemberCode")
-    fun getUserProfileFromSearch(@Query("QRCode") qrValue: String,
+    fun getUserProfileFromSearch(@Query("MemberCode") qrValue: String,
                                  @Query("MandalamId") mandalamId: String,
                                  @Query("MeetingSlno") meetingSlNo: String):
             Observable<Response<UserProfileResponse>>
