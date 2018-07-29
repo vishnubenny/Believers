@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.media.MediaPlayer
 import android.support.v4.app.Fragment
+import android.text.InputFilter
 import android.view.View
 import com.fabsv.believers.believers.R
 import com.fabsv.believers.believers.ui.base.MvpFragment
@@ -132,6 +133,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
         edit_text_qr_code.text.clear()
         edit_text_qr_code.setText("")
         edit_text_qr_code.requestFocus()
+        edit_text_qr_code.filters = edit_text_qr_code.filters + InputFilter.AllCaps()
         zXingScannerView?.resumeCameraPreview(this)
     }
 
