@@ -137,7 +137,7 @@ abstract class MvpActivity<V : MvpView, P : MvpPresenter<V>> : BaseActivity(), M
         supportActionBar?.setDisplayHomeAsUpEnabled(homeUpEnabled)
     }
 
-    fun getCurrentFragmentInstance(): Fragment {
+    fun getCurrentFragmentInstance(): Fragment? {
         return supportFragmentManager.findFragmentById(R.id.container)
     }
 
