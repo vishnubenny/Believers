@@ -136,7 +136,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     }
 
     private fun presetAlert() {
-        mp = MediaPlayer.create(activity, R.raw.beep_01a)
+        mp = MediaPlayer.create(activity, R.raw.beep_07a)
         mp.setOnCompletionListener {
             it.release()
         }
