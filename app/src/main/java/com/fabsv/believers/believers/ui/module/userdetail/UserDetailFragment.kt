@@ -3,6 +3,7 @@ package com.fabsv.believers.believers.ui.module.userdetail
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Base64
@@ -22,6 +23,7 @@ import java.io.ByteArrayOutputStream
 class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDetailContract.UserDetailPresenter>(),
         UserDetailContract.UserDetailView, AnkoLogger {
     private var userProfileResponse: UserProfileResponse? = null
+    private var mp: MediaPlayer? = null
 
     override fun onPrepareFragment(view: View?) {
         presetScreen()
@@ -62,7 +64,12 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
         return RxUtils.makeObservable(usernameBasedValidity || alreadyPresented)
     }
 
+    /**
+     * In the case of 'onApproveStatusUpdateSuccess()' loader will there to block the screen interaction.
+     * So have to dismiss the loader before moving back from the user details screen
+     */
     override fun exitUserDetailScreen() {
+        hideProgress()
         popBackCurrentFragment()
     }
 
@@ -72,7 +79,10 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
 
     override fun onApproveStatusUpdateSuccess() {
         showSuccessShortToast(getString(R.string.attendance_updated_successfully))
-        exitUserDetailScreen()
+        /*
+        exitUserDetailScreen() will call after playing the update success alert
+         */
+        mp?.start()
     }
 
     override fun onApproveStatusUpdateFailed() {
@@ -164,6 +174,18 @@ class UserDetailFragment : MvpFragment<UserDetailContract.UserDetailView, UserDe
     private fun presetScreen() {
         updateToolbarTitle(activity?.getString(R.string.user_profile), homeUpEnabled = true)
         presetUserProfile()
+        presetAlert()
+    }
+
+    /**
+     * User detail screen will dismiss after playing the alert for success attendance update
+     */
+    private fun presetAlert() {
+        mp = MediaPlayer.create(activity, R.raw.beep_01a)
+        mp?.setOnCompletionListener {
+            it.release()
+            exitUserDetailScreen()
+        }
     }
 
     companion object {

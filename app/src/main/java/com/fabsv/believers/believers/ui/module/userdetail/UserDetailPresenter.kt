@@ -50,10 +50,11 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         val approveButtonObservable: Observable<Boolean>? = getApproveButtonObservable()
         val approveButtonDisposable = approveButtonObservable?.subscribe(
                 {
-                    getView()?.hideProgress()
                     if (it) {
+                        //Loader will dismiss only after the alert tone played
                         approveStatusUpdateSuccess()
                     } else {
+                        getView()?.hideProgress()
                         approveStatusUpdateFailed()
                     }
                 },
@@ -123,6 +124,9 @@ class UserDetailPresenter(val context: Context, val appPreferencesHelper: AppPre
         }
     }
 
+    /**
+     * Progress is not yet dismissed. To block the screen, loader will dismiss only after alert completed
+     */
     private fun approveStatusUpdateSuccess() {
         if (isViewAttached()) {
             getView()?.resetScreen()
