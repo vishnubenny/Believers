@@ -7,4 +7,5 @@
     <color name="light_grey">#EEEEEE</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimaryExtraLight">#2995e1</color>
+    <color name="green">#008000</color>
 </resources>
