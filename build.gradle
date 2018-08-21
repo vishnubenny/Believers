@@ -3,10 +3,13 @@
 buildscript {
     ext.kotlin_version = '1.2.50'
     ext.anko_version = '0.10.4'
-    ext.firebase_version = '3.2.0'
+    ext.firebase_version = '4.0.1'
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.0-alpha06'
@@ -15,6 +18,8 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "com.google.gms:google-services:$firebase_version" // google-services plugin
+
+        classpath 'io.fabric.tools:gradle:1.25.4'//crashlytics
     }
 }
 
@@ -23,7 +28,7 @@ allprojects {
         google()
         jcenter()
         maven {
-            url "https://maven.google.com" // Google's Maven repository
+            url 'https://maven.google.com/' // Google's Maven repository
         }
     }
 }
