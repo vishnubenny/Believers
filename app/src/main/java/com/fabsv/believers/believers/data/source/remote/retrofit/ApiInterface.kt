@@ -13,13 +13,13 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiInterface {
-//    @GET("5b2b77e73000007e0023464b")    //login mock
+    //    @GET("5b2b77e73000007e0023464b")    //login mock
     @GET("ValidateLogin")
     fun userLogin(@Query("UserName") username: String,
                   @Query("Password") password: String,
                   @Query("MobileNumber") mobile: String): Observable<Response<LoginResponse>>
 
-//    @GET("5b0ade4e2f00009800ec4c63") // empty data
+    //    @GET("5b0ade4e2f00009800ec4c63") // empty data
 //    @GET("5b0faa3b3000004a00115186") // full data: attType: Not Present
 //    @GET("5b33a3a1320000771bd1e1ef") //attType: Present response
     @GET("GetByQRCode")
@@ -28,6 +28,7 @@ interface ApiInterface {
                        @Query("MeetingSlno") meetingSlNo: String?): Observable<Response<UserProfileResponse>>
 
 //    @GET("5b0faa3b3000004a00115186") // full data: attType: Not Present
+//    @GET("5b33a3a1320000771bd1e1ef") //attType: Present response
     @GET("GetByMemberCode")
     fun getUserProfileFromSearch(@Query("MemberCode") qrValue: String,
                                  @Query("MandalamId") mandalamId: String,
@@ -37,7 +38,7 @@ interface ApiInterface {
     @POST("MakePresent")
     fun makeAttendancePresent(@Body requestBody: RequestBody): Observable<Response<Void>>
 
-//        @GET("5b0540623200008100ebf7b1")
+    //        @GET("5b0540623200008100ebf7b1")
     @GET("CollectionSummary")
     fun getCollectionReport(@Query("MandalamId") mandalamId: String,
                             @Query("MeetingSlno") meetingSlNo: String,

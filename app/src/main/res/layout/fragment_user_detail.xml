@@ -28,7 +28,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/green"
+        android:background="@drawable/bg_approve_button_user_details"
         android:text="@string/approve"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_normal"
