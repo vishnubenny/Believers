@@ -96,8 +96,8 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     override fun handleResult(result: Result?) {
         result?.let {
-            edit_text_qr_code?.setText(it.text)
-            edit_text_qr_code?.setSelection(edit_text_qr_code.length())
+            it.text?.let { code -> edit_text_qr_code?.setText(code) }
+            edit_text_qr_code?.length()?.let { it1 -> edit_text_qr_code?.setSelection(it1) }
             mp?.start()
             isScanned.onNext(true)
         }
