@@ -24,7 +24,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
     private var zXingScannerView: ZXingScannerView? = null
     private val scanButtonClickPublishSubject = PublishSubject.create<Boolean>()
     private val isScanned = PublishSubject.create<Boolean>()
-    private lateinit var mp: MediaPlayer
+    private var mp: MediaPlayer? = null
 
     override fun onPrepareFragment(view: View?) {
         handleCameraPermission()
@@ -96,9 +96,9 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     override fun handleResult(result: Result?) {
         result?.let {
-            edit_text_qr_code.setText(it.text)
-            edit_text_qr_code.setSelection(edit_text_qr_code.length())
-            mp.start()
+            edit_text_qr_code?.setText(it.text)
+            edit_text_qr_code?.setSelection(edit_text_qr_code.length())
+            mp?.start()
             isScanned.onNext(true)
         }
     }
@@ -139,7 +139,7 @@ class ScanFragment : MvpFragment<ScanContract.ScanView, ScanContract.ScanPresent
 
     private fun presetAlert() {
         mp = MediaPlayer.create(activity, R.raw.beep_07a)
-        mp.setOnCompletionListener {
+        mp?.setOnCompletionListener {
             it.release()
         }
     }
