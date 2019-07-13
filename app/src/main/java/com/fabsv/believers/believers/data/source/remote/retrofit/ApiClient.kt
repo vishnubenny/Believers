@@ -2,6 +2,7 @@ package com.fabsv.believers.believers.data.source.remote.retrofit
 
 import com.fabsv.believers.believers.util.constants.AppConstants
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,6 +18,7 @@ class ApiClient {
                 .connectTimeout(/*2, TimeUnit.MINUTES*/ 5, TimeUnit.SECONDS)
                 .readTimeout(2, TimeUnit.MINUTES /*5, TimeUnit.SECONDS*/)
                 .writeTimeout(2, TimeUnit.MINUTES /*5, TimeUnit.SECONDS*/)
+                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build()
 
         fun getClient(): Retrofit? {
